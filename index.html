@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Well Clinic — Controle de Cilindros</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #F4F1EC;
+            --card: #FFFFFF;
+            --primary: #1B4D3E;
+            --primary-light: #2A7A5E;
+            --accent: #C8965C;
+            --text: #1A1A1A;
+            --text-secondary: #6B6B6B;
+            --border: #D9D4CC;
+            --success: #2A7A5E;
+            --success-bg: #E8F5EE;
+            --error: #C0392B;
+            --error-bg: #FDEDEC;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --radius: 12px;
+            --n2o: #5B6ABF;
+            --o2: #3A9E7E;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .header {
+            background: var(--primary);
+            color: white;
+            padding: 20px 16px 16px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header h1 { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 2px; }
+        .header p { font-size: 12px; opacity: 0.7; }
+        .container { max-width: 480px; margin: 0 auto; padding: 16px; }
+
+        /* ── NO QR STATE ── */
+        .no-qr {
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .no-qr .icon-scan { font-size: 48px; margin-bottom: 16px; }
+        .no-qr h2 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .no-qr p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+        /* ── CYLINDER BANNER ── */
+        .cyl-banner {
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 20px 16px;
+            margin-bottom: 16px;
+            text-align: center;
+            border-left: 5px solid var(--primary);
+        }
+        .cyl-banner.n2o { border-left-color: var(--n2o); }
+        .cyl-banner.o2 { border-left-color: var(--o2); }
+        .cyl-tag {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+        }
+        .n2o .cyl-tag { background: #EDEEF8; color: var(--n2o); }
+        .o2 .cyl-tag { background: #E4F3ED; color: var(--o2); }
+        .cyl-id { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+        .cyl-cap { font-size: 14px; color: var(--text-secondary); }
+
+        /* ── CARDS ── */
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 20px 16px;
+            margin-bottom: 16px;
+        }
+        .card-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-title .icon {
+            width: 20px; height: 20px;
+            background: var(--primary);
+            color: white;
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; flex-shrink: 0;
+        }
+
+        /* ── FIELDS ── */
+        .field { margin-bottom: 16px; }
+        .field:last-child { margin-bottom: 0; }
+        label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+        input {
+            width: 100%; padding: 14px 12px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            background: white; color: var(--text);
+            transition: border-color 0.2s;
+            -webkit-appearance: none;
+        }
+        input:focus { outline: none; border-color: var(--primary); }
+
+        /* ── ACTION BUTTONS ── */
+        .action-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .action-btn {
+            padding: 16px 8px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            background: white;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px; font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer; text-align: center;
+            transition: all 0.2s; line-height: 1.3;
+        }
+        .action-btn .emoji { display: block; font-size: 28px; margin-bottom: 6px; }
+        .action-btn.selected-out { border-color: var(--error); background: var(--error-bg); color: var(--error); }
+        .action-btn.selected-in { border-color: var(--success); background: var(--success-bg); color: var(--success); }
+
+        /* ── LOCATION BUTTONS ── */
+        .loc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .loc-btn {
+            padding: 14px 8px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            background: white;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px; font-weight: 600;
+            color: var(--text);
+            cursor: pointer; text-align: center;
+            transition: all 0.15s;
+        }
+        .loc-btn:active { transform: scale(0.97); }
+        .loc-btn .loc-icon { display: block; font-size: 22px; margin-bottom: 4px; }
+        .loc-btn.selected { border-color: var(--primary); background: #E8F0ED; color: var(--primary); }
+
+        /* ── SUBMIT ── */
+        .submit-btn {
+            width: 100%; padding: 18px;
+            background: var(--primary); color: white;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px; font-weight: 700;
+            border: none; border-radius: 12px;
+            cursor: pointer; transition: all 0.2s;
+            letter-spacing: 0.5px; margin-top: 8px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .submit-btn:active { transform: scale(0.98); background: var(--primary-light); }
+        .submit-btn:disabled { background: var(--border); color: var(--text-secondary); cursor: not-allowed; transform: none; }
+
+        .error-msg {
+            background: var(--error-bg); color: var(--error);
+            font-size: 13px; padding: 10px 12px; border-radius: 8px;
+            margin-top: 8px; display: none;
+        }
+        .error-msg.show { display: block; }
+
+        .spinner {
+            width: 20px; height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white; border-radius: 50%;
+            animation: spin 0.6s linear infinite; display: none;
+        }
+        .spinner.show { display: block; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── MODALS ── */
+        .feedback {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 200; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .feedback.show { opacity: 1; pointer-events: auto; }
+        .feedback-box {
+            background: white; border-radius: 16px;
+            padding: 32px 24px; text-align: center;
+            max-width: 320px; width: 90%;
+            transform: scale(0.9); transition: transform 0.3s;
+        }
+        .feedback.show .feedback-box { transform: scale(1); }
+        .feedback-box .check {
+            width: 56px; height: 56px;
+            background: var(--success-bg); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px; margin: 0 auto 16px;
+        }
+        .feedback-box h3 { font-size: 18px; margin-bottom: 6px; }
+        .feedback-box p { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; white-space: pre-line; }
+        .modal-actions { display: flex; flex-direction: column; gap: 10px; }
+        .modal-actions button {
+            padding: 14px 32px; background: var(--primary); color: white;
+            border: none; border-radius: 10px;
+            font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+            cursor: pointer; width: 100%;
+        }
+        .btn-secondary { background: transparent !important; color: var(--text-secondary) !important; border: 2px solid var(--border) !important; }
+
+        .confirm-summary {
+            background: #F7F5F2; border-radius: 10px; padding: 14px;
+            margin-bottom: 16px; font-size: 14px; line-height: 1.7;
+            text-align: left;
+        }
+        .confirm-summary .row { display: flex; justify-content: space-between; }
+        .confirm-summary .label { color: var(--text-secondary); }
+        .confirm-summary .value { font-weight: 600; text-align: right; }
+
+        .last-record {
+            font-size: 12px; color: var(--text-secondary);
+            padding: 10px 12px; background: #F7F5F2;
+            border-radius: 8px; margin-top: 12px; line-height: 1.5;
+        }
+        .last-record strong { color: var(--text); }
+        .footer { text-align: center; font-size: 11px; color: var(--text-secondary); margin-top: 24px; padding-bottom: 24px; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>WELL CLINIC — CILINDROS</h1>
+    <p>Registro de movimentação de gases</p>
+</div>
+
+<div class="container">
+
+    <!-- ════ NO QR ════ -->
+    <div id="stateNoQR" class="no-qr">
+        <div class="icon-scan">📷</div>
+        <h2>Escaneie o QR Code</h2>
+        <p>Use a câmera do celular para ler o QR Code colado no cilindro.<br><br>O cilindro será identificado automaticamente.</p>
+    </div>
+
+    <!-- ════ FORM ════ -->
+    <div id="stateForm" style="display: none;">
+
+        <div class="cyl-banner" id="cylBanner">
+            <span class="cyl-tag" id="cylTag">—</span>
+            <div class="cyl-id" id="cylId">—</div>
+            <div class="cyl-cap" id="cylCap">—</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><span class="icon">1</span> Operador</div>
+            <div class="field">
+                <label for="operador">Nome do operador</label>
+                <input type="text" id="operador" placeholder="Digite seu nome" autocomplete="name">
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><span class="icon">2</span> Ação</div>
+            <div class="action-toggle">
+                <button type="button" class="action-btn" data-action="Retirada (Vazio)" onclick="selectAction(this)">
+                    <span class="emoji">🔴</span>Retirar Vazio
+                </button>
+                <button type="button" class="action-btn" data-action="Inserção (Cheio)" onclick="selectAction(this)">
+                    <span class="emoji">🟢</span>Inserir Cheio
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><span class="icon">3</span> Localização</div>
+            <label style="margin-bottom: 10px;">Onde está sendo instalado / retirado?</label>
+            <div class="loc-grid">
+                <button type="button" class="loc-btn" data-loc="Armário Externo" onclick="selectLocation(this)">
+                    <span class="loc-icon">🚪</span>Armário Externo
+                </button>
+                <button type="button" class="loc-btn" data-loc="Sala 8" onclick="selectLocation(this)">
+                    <span class="loc-icon">🏥</span>Sala 8
+                </button>
+                <button type="button" class="loc-btn" data-loc="Expurgo" onclick="selectLocation(this)">
+                    <span class="loc-icon">🧹</span>Expurgo
+                </button>
+                <button type="button" class="loc-btn" data-loc="Outra" onclick="selectLocation(this)">
+                    <span class="loc-icon">📍</span>Outra
+                </button>
+            </div>
+            <div class="field" id="outraField" style="display: none; margin-top: 12px;">
+                <input type="text" id="outraLoc" placeholder="Digite a localização">
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><span class="icon">4</span> Observação <span style="font-weight:400;text-transform:none;letter-spacing:0;">(opcional)</span></div>
+            <div class="field">
+                <input type="text" id="observacao" placeholder="Ex: válvula travada, cilindro amassado">
+            </div>
+        </div>
+
+        <button class="submit-btn" id="submitBtn" onclick="confirmRecord()" disabled>
+            <span class="spinner" id="loadingSpinner"></span>
+            <span id="submitText">Registrar Movimentação</span>
+        </button>
+        <div class="error-msg" id="errorMsg"></div>
+
+        <div class="last-record" id="lastRecord" style="display: none;">
+            <strong>Último registro:</strong><br><span id="lastRecordText"></span>
+        </div>
+        <p class="footer">Well Clinic — Controle de Cilindros<br>Dados registrados automaticamente na planilha</p>
+    </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="feedback" id="confirmModal">
+    <div class="feedback-box">
+        <h3>Confirmar registro?</h3>
+        <div class="confirm-summary" id="confirmSummary"></div>
+        <div class="modal-actions">
+            <button onclick="submitRecord()">Confirmar e Registrar</button>
+            <button class="btn-secondary" onclick="closeConfirm()">Voltar e Corrigir</button>
+        </div>
+    </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="feedback" id="successModal">
+    <div class="feedback-box">
+        <div class="check">✓</div>
+        <h3>Registrado!</h3>
+        <p id="successText"></p>
+        <div class="modal-actions">
+            <button onclick="resetForm()">Novo Registro (mesmo cilindro)</button>
+            <button class="btn-secondary" onclick="window.location.href=window.location.pathname">Escanear outro cilindro</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// ⚠️  Cole aqui a URL do seu Google Apps Script
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJqDDH8h5gaybLSk1v11-JOYL-FMvHot1BI9fq1mo5JBMWGyY4E6pG3J7ydN9SWMDUiA/exec';
+// ══════════════════════════════════════════════════════════════
+
+const CILINDROS = {
+    'nitroso1':  { id: 'Nitroso 1',  tipo: 'Óxido Nitroso', capacidade: '33kg'  },
+    'nitroso2':  { id: 'Nitroso 2',  tipo: 'Óxido Nitroso', capacidade: '33kg'  },
+    'nitroso3':  { id: 'Nitroso 3',  tipo: 'Óxido Nitroso', capacidade: '33kg'  },
+    'nitroso4':  { id: 'Nitroso 4',  tipo: 'Óxido Nitroso', capacidade: '7kg'   },
+    'oxigenio1': { id: 'Oxigênio 1', tipo: 'Oxigênio',      capacidade: '10m³'  },
+    'oxigenio2': { id: 'Oxigênio 2', tipo: 'Oxigênio',      capacidade: '10m³'  },
+    'oxigenio3': { id: 'Oxigênio 3', tipo: 'Oxigênio',      capacidade: '10m³'  },
+    'oxigenio4': { id: 'Oxigênio 4', tipo: 'Oxigênio',      capacidade: '10m³'  },
+    'oxigenio5': { id: 'Oxigênio 5', tipo: 'Oxigênio',      capacidade: '10m³'  },
+    'oxigenio6': { id: 'Oxigênio 6', tipo: 'Oxigênio',      capacidade: '1,5m³' },
+    'oxigenio7': { id: 'Oxigênio 7', tipo: 'Oxigênio',      capacidade: '1,5m³' },
+    'oxigenio8': { id: 'Oxigênio 8', tipo: 'Oxigênio',      capacidade: '1,5m³' },
+};
+
+let currentCylinder = null;
+let selectedAction = null;
+let selectedLocation = null;
+
+function init() {
+    const params = new URLSearchParams(window.location.search);
+    const cid = params.get('cid');
+    if (cid && CILINDROS[cid]) {
+        currentCylinder = CILINDROS[cid];
+        showForm();
+    }
+    const saved = localStorage.getItem('wc_operador');
+    if (saved) document.getElementById('operador').value = saved;
+}
+
+function showForm() {
+    document.getElementById('stateNoQR').style.display = 'none';
+    document.getElementById('stateForm').style.display = 'block';
+    const isN2O = currentCylinder.tipo === 'Óxido Nitroso';
+    document.getElementById('cylBanner').className = 'cyl-banner ' + (isN2O ? 'n2o' : 'o2');
+    document.getElementById('cylTag').textContent = currentCylinder.tipo;
+    document.getElementById('cylId').textContent = currentCylinder.id;
+    document.getElementById('cylCap').textContent = 'Capacidade: ' + currentCylinder.capacidade;
+}
+
+function selectAction(btn) {
+    document.querySelectorAll('.action-btn').forEach(b => b.classList.remove('selected-out','selected-in'));
+    selectedAction = btn.dataset.action;
+    btn.classList.add(selectedAction.includes('Retirada') ? 'selected-out' : 'selected-in');
+    checkReady();
+}
+
+function selectLocation(btn) {
+    document.querySelectorAll('.loc-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    if (btn.dataset.loc === 'Outra') {
+        document.getElementById('outraField').style.display = 'block';
+        selectedLocation = null;
+    } else {
+        document.getElementById('outraField').style.display = 'none';
+        document.getElementById('outraLoc').value = '';
+        selectedLocation = btn.dataset.loc;
+    }
+    checkReady();
+}
+
+function getLocation() {
+    if (selectedLocation) return selectedLocation;
+    return document.getElementById('outraLoc').value.trim() || null;
+}
+
+function checkReady() {
+    const ok = document.getElementById('operador').value.trim() && selectedAction && getLocation();
+    document.getElementById('submitBtn').disabled = !ok;
+}
+
+document.getElementById('operador').addEventListener('input', checkReady);
+document.getElementById('outraLoc').addEventListener('input', checkReady);
+
+function confirmRecord() {
+    const operador = document.getElementById('operador').value.trim();
+    const loc = getLocation();
+    const obs = document.getElementById('observacao').value.trim();
+    if (!operador || !selectedAction || !loc) return;
+
+    const emoji = selectedAction.includes('Retirada') ? '🔴' : '🟢';
+    let h = '';
+    h += `<div class="row"><span class="label">Cilindro</span><span class="value">${currentCylinder.id}</span></div>`;
+    h += `<div class="row"><span class="label">Gás</span><span class="value">${currentCylinder.tipo}</span></div>`;
+    h += `<div class="row"><span class="label">Capacidade</span><span class="value">${currentCylinder.capacidade}</span></div>`;
+    h += `<div class="row"><span class="label">Ação</span><span class="value">${emoji} ${selectedAction}</span></div>`;
+    h += `<div class="row"><span class="label">Local</span><span class="value">${loc}</span></div>`;
+    h += `<div class="row"><span class="label">Operador</span><span class="value">${operador}</span></div>`;
+    if (obs) h += `<div class="row"><span class="label">Obs</span><span class="value">${obs}</span></div>`;
+    document.getElementById('confirmSummary').innerHTML = h;
+    document.getElementById('confirmModal').classList.add('show');
+}
+
+function closeConfirm() { document.getElementById('confirmModal').classList.remove('show'); }
+
+async function submitRecord() {
+    document.getElementById('confirmModal').classList.remove('show');
+    const operador = document.getElementById('operador').value.trim();
+    const loc = getLocation();
+    const obs = document.getElementById('observacao').value.trim();
+    const btn = document.getElementById('submitBtn');
+    const spinner = document.getElementById('loadingSpinner');
+    const submitText = document.getElementById('submitText');
+    const errorMsg = document.getElementById('errorMsg');
+
+    btn.disabled = true;
+    spinner.classList.add('show');
+    submitText.textContent = 'Enviando...';
+    errorMsg.classList.remove('show');
+
+    const payload = {
+        operador, acao: selectedAction,
+        cilindro_id: currentCylinder.id,
+        tipo_gas: currentCylinder.tipo,
+        capacidade: currentCylinder.capacidade,
+        localizacao: loc,
+        observacao: obs || '—'
+    };
+
+    try {
+        await fetch(APPS_SCRIPT_URL, {
+            method: 'POST', mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        showSuccess(payload);
+    } catch (err) {
+        errorMsg.textContent = 'Erro ao enviar. Verifique sua conexão.';
+        errorMsg.classList.add('show');
+        btn.disabled = false;
+    } finally {
+        spinner.classList.remove('show');
+        submitText.textContent = 'Registrar Movimentação';
+    }
+}
+
+function showSuccess(d) {
+    const e = d.acao.includes('Retirada') ? '🔴' : '🟢';
+    document.getElementById('successText').textContent = `${e} ${d.acao}\n${d.cilindro_id} (${d.capacidade}) — ${d.localizacao}`;
+    document.getElementById('successModal').classList.add('show');
+    const t = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('lastRecordText').textContent = `${t} · ${d.operador} · ${e} ${d.acao} · ${d.cilindro_id} · ${d.localizacao}`;
+    document.getElementById('lastRecord').style.display = 'block';
+    localStorage.setItem('wc_operador', d.operador);
+}
+
+function resetForm() {
+    document.getElementById('successModal').classList.remove('show');
+    selectedAction = null; selectedLocation = null;
+    document.querySelectorAll('.action-btn').forEach(b => b.classList.remove('selected-out','selected-in'));
+    document.querySelectorAll('.loc-btn').forEach(b => b.classList.remove('selected'));
+    document.getElementById('outraField').style.display = 'none';
+    document.getElementById('outraLoc').value = '';
+    document.getElementById('observacao').value = '';
+    document.getElementById('submitBtn').disabled = true;
+}
+
+init();
+</script>
+</body>
+</html>
