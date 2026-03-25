@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Well Clinic — Dashboard de Gases</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --azul: #0F1F3A;
+            --azul-soft: #1A2E52;
+            --dourado: #A0896C;
+            --dourado-light: #C4AD8F;
+            --verde: #4A9E8E;
+            --verde-light: #5CB8A6;
+            --verde-bg: rgba(74,158,142,0.08);
+            --marfim: #FAF7F2;
+            --marfim-warm: #F5F0E8;
+            --grafite: #2D2D3A;
+            --grafite-light: #5A5A6E;
+            --terra: #B85C4A;
+            --terra-bg: rgba(184,92,74,0.08);
+            --card: #FFFFFF;
+            --border: rgba(160,137,108,0.2);
+            --shadow-sm: 0 2px 8px rgba(15,31,58,0.06);
+            --shadow-md: 0 4px 20px rgba(15,31,58,0.08);
+            --shadow-lg: 0 8px 40px rgba(15,31,58,0.12);
+            --radius: 16px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--marfim);
+            color: var(--grafite);
+            min-height: 100vh;
+        }
+
+        /* ── HEADER ── */
+        .dash-header {
+            background: linear-gradient(135deg, var(--azul) 0%, var(--azul-soft) 100%);
+            color: white;
+            padding: 28px 24px 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .dash-header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -15%;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(160,137,108,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .dash-header .logo {
+            font-family: 'Lora', serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: var(--dourado-light);
+            text-transform: uppercase;
+            position: relative;
+        }
+        .dash-header h1 {
+            font-family: 'Lora', serif;
+            font-size: 22px;
+            font-weight: 600;
+            margin-top: 4px;
+            position: relative;
+        }
+        .dash-header .divider {
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--dourado), transparent);
+            margin: 10px auto 8px;
+        }
+        .dash-header .updated {
+            font-size: 11px;
+            opacity: 0.5;
+            font-weight: 300;
+            position: relative;
+        }
+        .back-link {
+            position: absolute;
+            left: 16px;
+            top: 24px;
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: white; }
+
+        /* ── CONTAINER ── */
+        .dash-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        /* ── LOADING ── */
+        .loading-state {
+            text-align: center;
+            padding: 80px 20px;
+        }
+        .loading-state .spinner-lg {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border);
+            border-top-color: var(--dourado);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+        .loading-state p {
+            font-size: 14px;
+            color: var(--grafite-light);
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── KPI ROW ── */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .kpi {
+            background: var(--card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 20px 16px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            animation: fadeUp 0.5s ease-out both;
+        }
+        .kpi .kpi-value {
+            font-family: 'Lora', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--azul);
+            line-height: 1;
+        }
+        .kpi .kpi-label {
+            font-size: 11px;
+            color: var(--grafite-light);
+            margin-top: 6px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        .kpi.alert .kpi-value { color: var(--terra); }
+        .kpi.alert { border-color: rgba(184,92,74,0.3); background: var(--terra-bg); }
+        .kpi.success .kpi-value { color: var(--verde); }
+
+        /* ── SECTION ── */
+        .section {
+            margin-bottom: 24px;
+            animation: fadeUp 0.5s ease-out both;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .section-header .section-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .section-header h2 {
+            font-family: 'Lora', serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--azul);
+        }
+        .section-header p {
+            font-size: 11px;
+            color: var(--grafite-light);
+        }
+
+        /* ── TABLE ── */
+        .table-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        .table-card table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .table-card th {
+            background: var(--marfim-warm);
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 11px;
+            color: var(--grafite-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+        }
+        .table-card td {
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(160,137,108,0.08);
+            color: var(--grafite);
+        }
+        .table-card tr:last-child td { border-bottom: none; }
+        .table-card tr:hover td { background: rgba(250,247,242,0.5); }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .badge-ok { background: rgba(74,158,142,0.1); color: var(--verde); }
+        .badge-warn { background: rgba(184,92,74,0.1); color: var(--terra); }
+        .badge-cheio { background: rgba(74,158,142,0.1); color: var(--verde); }
+        .badge-vazio { background: rgba(184,92,74,0.1); color: var(--terra); }
+
+        /* ── BAR CHART ── */
+        .bar-chart {
+            background: var(--card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .bar-row:last-child { margin-bottom: 0; }
+        .bar-label {
+            width: 100px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--grafite);
+            flex-shrink: 0;
+            text-align: right;
+        }
+        .bar-track {
+            flex: 1;
+            height: 28px;
+            background: var(--marfim-warm);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+        .bar-fill {
+            height: 100%;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+            min-width: 30px;
+            transition: width 0.8s ease-out;
+        }
+        .bar-fill.azul { background: linear-gradient(90deg, var(--azul), var(--azul-soft)); }
+        .bar-fill.verde { background: linear-gradient(90deg, var(--verde), var(--verde-light)); }
+        .bar-fill.dourado { background: linear-gradient(90deg, #8B6914, var(--dourado)); }
+        .bar-fill.terra { background: linear-gradient(90deg, var(--terra), #D4765E); }
+
+        /* ── GRID ── */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        @media (max-width: 600px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .kpi-row { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        /* ── ESTOQUE CARDS ── */
+        .estoque-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        .estoque-item {
+            background: var(--card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .estoque-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .estoque-dot.cheio { background: var(--verde); box-shadow: 0 0 8px rgba(74,158,142,0.3); }
+        .estoque-dot.vazio { background: var(--terra); box-shadow: 0 0 8px rgba(184,92,74,0.3); }
+        .estoque-info .est-name { font-size: 14px; font-weight: 600; color: var(--azul); }
+        .estoque-info .est-detail { font-size: 11px; color: var(--grafite-light); }
+
+        /* ── PREDICTION ── */
+        .pred-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 18px;
+            box-shadow: var(--shadow-sm);
+        }
+        .pred-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(160,137,108,0.08);
+        }
+        .pred-row:last-child { border-bottom: none; }
+        .pred-name { font-size: 13px; font-weight: 500; }
+        .pred-value {
+            font-family: 'Lora', serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--azul);
+        }
+        .pred-value.insuf { font-size: 12px; color: var(--grafite-light); font-family: 'Poppins'; font-weight: 400; }
+
+        /* ── EMPTY ── */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--grafite-light);
+            font-size: 14px;
+        }
+        .empty-state .empty-icon { font-size: 36px; margin-bottom: 12px; }
+
+        /* ── FOOTER ── */
+        .dash-footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-bottom: 32px;
+        }
+        .dash-footer .divider {
+            width: 40px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--dourado), transparent);
+            margin: 0 auto 12px;
+        }
+        .dash-footer .brand {
+            font-family: 'Lora', serif;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--dourado);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .dash-footer .dev {
+            font-size: 9px;
+            color: rgba(45,45,58,0.25);
+            margin-top: 8px;
+        }
+
+        /* ── ERROR ── */
+        .error-state {
+            background: var(--terra-bg);
+            border: 1px solid rgba(184,92,74,0.2);
+            border-radius: var(--radius);
+            padding: 24px;
+            text-align: center;
+        }
+        .error-state h3 { color: var(--terra); font-size: 16px; margin-bottom: 8px; }
+        .error-state p { font-size: 13px; color: var(--grafite-light); line-height: 1.6; }
+        .error-state code { font-size: 11px; background: rgba(0,0,0,0.05); padding: 2px 8px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="dash-header">
+    <a href="index.html" class="back-link">← Registro</a>
+    <div class="logo">Well Clinic</div>
+    <h1>Dashboard de Gases Medicinais</h1>
+    <div class="divider"></div>
+    <div class="updated" id="updatedAt">Carregando dados...</div>
+</div>
+
+<div class="dash-container" id="dashContent">
+    <div class="loading-state" id="loadingState">
+        <div class="spinner-lg"></div>
+        <p>Consultando dados da planilha...</p>
+    </div>
+</div>
+
+<script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJqDDH8h5gaybLSk1v11-JOYL-FMvHot1BI9fq1mo5JBMWGyY4E6pG3J7ydN9SWMDUiA/exec';
+
+async function loadDashboard() {
+    try {
+        const res = await fetch(APPS_SCRIPT_URL + '?action=dashboard');
+        const data = await res.json();
+        renderDashboard(data);
+    } catch (err) {
+        document.getElementById('dashContent').innerHTML = `
+            <div class="error-state">
+                <h3>Não foi possível carregar os dados</h3>
+                <p>Verifique se o Apps Script foi atualizado para a versão v3 (com suporte a dashboard)
+                e se uma nova implantação foi feita.<br><br>
+                Erro: <code>${err.message}</code></p>
+            </div>
+        `;
+    }
+}
+
+function renderDashboard(data) {
+    document.getElementById('updatedAt').textContent = 'Atualizado: ' + data.geradoEm;
+
+    const v = data.valvulas;
+    const m = data.movimentacoes;
+    const e = data.estoque;
+
+    const cheios = e.filter(c => c.status === 'Cheio').length;
+    const vazios = e.filter(c => c.status === 'Vazio').length;
+    const alertas = v.diasSemFechamento ? v.diasSemFechamento.length : 0;
+
+    let html = '';
+
+    // ── KPIs ──
+    html += '<div class="kpi-row">';
+    html += kpi(m.total, 'Movimentações', '');
+    html += kpi(cheios, 'Cilindros Cheios', 'success');
+    html += kpi(vazios, 'Cilindros Vazios', vazios > 0 ? 'alert' : '');
+    html += kpi(alertas, 'Dias sem Fechamento', alertas > 0 ? 'alert' : 'success');
+    html += '</div>';
+
+    // ── ESTOQUE VISUAL ──
+    html += sectionHeader('📊', 'Status dos Cilindros', 'Visão em tempo real do estoque', '#E4F3ED');
+    html += '<div class="estoque-grid">';
+    e.forEach(c => {
+        const cls = c.status === 'Cheio' ? 'cheio' : 'vazio';
+        html += `<div class="estoque-item">
+            <div class="estoque-dot ${cls}"></div>
+            <div class="estoque-info">
+                <div class="est-name">${c.id}</div>
+                <div class="est-detail">${c.tipo} · ${c.capacidade} · ${c.local}</div>
+                <div class="est-detail"><span class="badge badge-${cls}">${c.status}</span></div>
+            </div>
+        </div>`;
+    });
+    html += '</div>';
+
+    // ── VÁLVULAS ──
+    html += sectionHeader('🔒', 'Controle de Válvulas', 'Histórico diário de abertura e fechamento', '#FAF0E6');
+
+    if (alertas > 0) {
+        html += `<div style="background:var(--terra-bg);border:1px solid rgba(184,92,74,0.2);border-radius:12px;padding:14px 18px;margin-bottom:14px;display:flex;align-items:center;gap:12px;">
+            <span style="font-size:24px;">⚠️</span>
+            <div>
+                <div style="font-weight:600;color:var(--terra);font-size:14px;">${alertas} dia${alertas > 1 ? 's' : ''} sem fechamento registrado</div>
+                <div style="font-size:12px;color:var(--grafite-light);">${v.diasSemFechamento.join(', ')}</div>
+            </div>
+        </div>`;
+    }
+
+    if (v.resumoDiario && v.resumoDiario.length > 0) {
+        html += '<div class="table-card"><table>';
+        html += '<tr><th>Data</th><th>Quem Abriu</th><th>Quem Fechou</th><th>Status</th></tr>';
+        v.resumoDiario.slice(0, 15).forEach(d => {
+            const status = d.abertura && d.fechamento
+                ? '<span class="badge badge-ok">✅ Completo</span>'
+                : '<span class="badge badge-warn">⚠️ Incompleto</span>';
+            html += `<tr>
+                <td style="font-weight:600;">${d.data}</td>
+                <td>${d.abertura || '<span style="color:var(--grafite-light)">—</span>'}</td>
+                <td>${d.fechamento || '<span style="color:var(--grafite-light)">—</span>'}</td>
+                <td>${status}</td>
+            </tr>`;
+        });
+        html += '</table></div>';
+    } else {
+        html += emptyState('Nenhum registro de válvulas ainda');
+    }
+
+    // ── MOVIMENTAÇÕES ──
+    html += sectionHeader('🔄', 'Análise de Movimentações', 'Frequência, consumo e previsão de pedidos', '#E4F3ED');
+
+    if (m.total > 0) {
+        html += '<div class="grid-2">';
+
+        // Por tipo de gás
+        html += '<div class="bar-chart">';
+        html += '<div style="font-weight:600;font-size:13px;margin-bottom:14px;color:var(--azul);">Consumo por Tipo de Gás</div>';
+        const maxGas = Math.max(...Object.values(m.porGas));
+        const gasColors = { 'Óxido Nitroso': 'azul', 'Oxigênio': 'verde' };
+        Object.entries(m.porGas).forEach(([gas, count]) => {
+            const pct = Math.max(15, (count / maxGas) * 100);
+            const color = gasColors[gas] || 'dourado';
+            html += `<div class="bar-row">
+                <div class="bar-label">${gas}</div>
+                <div class="bar-track"><div class="bar-fill ${color}" style="width:${pct}%">${count}</div></div>
+            </div>`;
+        });
+        html += '</div>';
+
+        // Por localização
+        html += '<div class="bar-chart">';
+        html += '<div style="font-weight:600;font-size:13px;margin-bottom:14px;color:var(--azul);">Consumo por Localização</div>';
+        const maxLoc = Math.max(...Object.values(m.porLocal));
+        const locColors = ['verde', 'azul', 'dourado', 'terra'];
+        let ci = 0;
+        Object.entries(m.porLocal).forEach(([loc, count]) => {
+            const pct = Math.max(15, (count / maxLoc) * 100);
+            html += `<div class="bar-row">
+                <div class="bar-label">${loc}</div>
+                <div class="bar-track"><div class="bar-fill ${locColors[ci++ % 4]}" style="width:${pct}%">${count}</div></div>
+            </div>`;
+        });
+        html += '</div>';
+
+        html += '</div>'; // grid-2
+
+        // Frequência por cilindro
+        html += '<div style="margin-top:16px;" class="bar-chart">';
+        html += '<div style="font-weight:600;font-size:13px;margin-bottom:14px;color:var(--azul);">Frequência de Troca por Cilindro</div>';
+        const maxCyl = Math.max(...Object.values(m.porCilindro));
+        Object.entries(m.porCilindro).sort((a, b) => b[1] - a[1]).forEach(([cyl, count]) => {
+            const pct = Math.max(15, (count / maxCyl) * 100);
+            const color = cyl.includes('Nitroso') ? 'azul' : 'verde';
+            html += `<div class="bar-row">
+                <div class="bar-label">${cyl}</div>
+                <div class="bar-track"><div class="bar-fill ${color}" style="width:${pct}%">${count}</div></div>
+            </div>`;
+        });
+        html += '</div>';
+
+        // Previsão de pedido
+        html += '<div style="margin-top:16px;" class="pred-card">';
+        html += '<div style="font-weight:600;font-size:13px;margin-bottom:14px;color:var(--azul);">📅 Dias Médios entre Trocas <span style="font-weight:400;color:var(--grafite-light);font-size:11px;">(previsão de pedido)</span></div>';
+        Object.entries(m.mediaEntreTrocas).sort().forEach(([cyl, days]) => {
+            html += `<div class="pred-row">
+                <div class="pred-name">${cyl}</div>
+                <div class="pred-value ${days === null ? 'insuf' : ''}">${days !== null ? days + ' dias' : 'Dados insuficientes'}</div>
+            </div>`;
+        });
+        html += '</div>';
+
+        // Últimos registros
+        if (m.ultimosRegistros && m.ultimosRegistros.length > 0) {
+            html += '<div style="margin-top:16px;">';
+            html += '<div style="font-weight:600;font-size:13px;margin-bottom:10px;color:var(--azul);">Últimas Movimentações</div>';
+            html += '<div class="table-card"><table>';
+            html += '<tr><th>Data/Hora</th><th>Operador</th><th>Ação</th><th>Cilindro</th><th>Local</th></tr>';
+            m.ultimosRegistros.forEach(r => {
+                const isOut = r.acao && r.acao.includes('Retirada');
+                html += `<tr>
+                    <td style="font-size:12px;">${r.dataHora}</td>
+                    <td>${r.operador}</td>
+                    <td><span class="badge ${isOut ? 'badge-warn' : 'badge-ok'}">${isOut ? '🔴' : '🟢'} ${r.acao}</span></td>
+                    <td style="font-weight:600;">${r.cilindro}</td>
+                    <td>${r.local}</td>
+                </tr>`;
+            });
+            html += '</table></div></div>';
+        }
+
+    } else {
+        html += emptyState('Nenhuma movimentação registrada ainda. Os dados aparecerão aqui conforme o sistema for usado.');
+    }
+
+    // ── FOOTER ──
+    html += `<div class="dash-footer">
+        <div class="divider"></div>
+        <div class="brand">Well Clinic</div>
+        <div class="dev">Desenvolvido por Jonatã Schneider</div>
+    </div>`;
+
+    document.getElementById('dashContent').innerHTML = html;
+}
+
+function kpi(value, label, cls) {
+    return `<div class="kpi ${cls}"><div class="kpi-value">${value}</div><div class="kpi-label">${label}</div></div>`;
+}
+
+function sectionHeader(icon, title, subtitle, bg) {
+    return `<div class="section" style="margin-top:28px;">
+        <div class="section-header">
+            <div class="section-icon" style="background:${bg}">${icon}</div>
+            <div><h2>${title}</h2><p>${subtitle}</p></div>
+        </div>
+    </div>`;
+}
+
+function emptyState(msg) {
+    return `<div class="empty-state"><div class="empty-icon">📭</div><p>${msg}</p></div>`;
+}
+
+loadDashboard();
+</script>
+</body>
+</html>
