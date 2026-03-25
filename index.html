@@ -3,282 +3,986 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Well Clinic — Controle de Cilindros</title>
+    <title>Well Clinic — Controle de Gases</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #F4F1EC;
+            --azul: #0F1F3A;
+            --azul-soft: #1A2E52;
+            --azul-glow: #243B66;
+            --dourado: #A0896C;
+            --dourado-light: #C4AD8F;
+            --dourado-glow: rgba(160,137,108,0.15);
+            --verde: #4A9E8E;
+            --verde-light: #5CB8A6;
+            --verde-bg: rgba(74,158,142,0.08);
+            --marfim: #FAF7F2;
+            --marfim-warm: #F5F0E8;
+            --grafite: #2D2D3A;
+            --grafite-light: #5A5A6E;
+            --terra: #B85C4A;
+            --terra-bg: rgba(184,92,74,0.08);
             --card: #FFFFFF;
-            --primary: #1B4D3E;
-            --primary-light: #2A7A5E;
-            --accent: #C8965C;
-            --text: #1A1A1A;
-            --text-secondary: #6B6B6B;
-            --border: #D9D4CC;
-            --success: #2A7A5E;
-            --success-bg: #E8F5EE;
-            --error: #C0392B;
-            --error-bg: #FDEDEC;
-            --shadow: 0 2px 12px rgba(0,0,0,0.06);
-            --radius: 12px;
-            --n2o: #5B6ABF;
-            --o2: #3A9E7E;
+            --border: rgba(160,137,108,0.2);
+            --shadow-sm: 0 2px 8px rgba(15,31,58,0.06);
+            --shadow-md: 0 4px 20px rgba(15,31,58,0.08);
+            --shadow-lg: 0 8px 40px rgba(15,31,58,0.12);
+            --shadow-gold: 0 4px 20px rgba(160,137,108,0.15);
+            --radius: 16px;
+            --radius-sm: 12px;
         }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            font-family: 'Poppins', sans-serif;
+            background: var(--marfim);
+            color: var(--grafite);
             min-height: 100vh;
             -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
         }
+
+        /* ═══════════════════════════════════ */
+        /* HEADER                              */
+        /* ═══════════════════════════════════ */
         .header {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--azul) 0%, var(--azul-soft) 100%);
             color: white;
-            padding: 20px 16px 16px;
-            text-align: center;
+            padding: 0;
             position: sticky;
             top: 0;
             z-index: 100;
+            overflow: hidden;
         }
-        .header h1 { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 2px; }
-        .header p { font-size: 12px; opacity: 0.7; }
-        .container { max-width: 480px; margin: 0 auto; padding: 16px; }
-
-        /* ── NO QR STATE ── */
-        .no-qr {
-            background: var(--card);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 40px 20px;
-            text-align: center;
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(160,137,108,0.1) 0%, transparent 70%);
+            border-radius: 50%;
         }
-        .no-qr .icon-scan { font-size: 48px; margin-bottom: 16px; }
-        .no-qr h2 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-        .no-qr p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
-
-        /* ── CYLINDER BANNER ── */
-        .cyl-banner {
-            background: var(--card);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 20px 16px;
-            margin-bottom: 16px;
-            text-align: center;
-            border-left: 5px solid var(--primary);
+        .header-inner {
+            padding: 20px 20px 18px;
+            position: relative;
         }
-        .cyl-banner.n2o { border-left-color: var(--n2o); }
-        .cyl-banner.o2 { border-left-color: var(--o2); }
-        .cyl-tag {
-            display: inline-block;
-            font-size: 11px;
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+        .back-btn {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .back-btn.show { display: flex; }
+        .back-btn:active { background: rgba(255,255,255,0.15); transform: translateY(-50%) scale(0.95); }
+        .header-logo {
+            font-family: 'Lora', serif;
+            font-size: 13px;
             font-weight: 700;
+            letter-spacing: 3px;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            padding: 4px 12px;
-            border-radius: 20px;
-            margin-bottom: 10px;
+            color: var(--dourado-light);
         }
-        .n2o .cyl-tag { background: #EDEEF8; color: var(--n2o); }
-        .o2 .cyl-tag { background: #E4F3ED; color: var(--o2); }
-        .cyl-id { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
-        .cyl-cap { font-size: 14px; color: var(--text-secondary); }
+        .header h1 {
+            font-family: 'Lora', serif;
+            font-size: 17px;
+            font-weight: 600;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+        .header-divider {
+            width: 32px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--dourado), transparent);
+            margin: 6px auto 4px;
+        }
+        .header-sub {
+            font-size: 11px;
+            font-weight: 300;
+            text-align: center;
+            opacity: 0.6;
+            letter-spacing: 1px;
+        }
 
-        /* ── CARDS ── */
+        /* ═══════════════════════════════════ */
+        /* CONTAINER                           */
+        /* ═══════════════════════════════════ */
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px 16px;
+        }
+
+        /* ═══════════════════════════════════ */
+        /* ANIMATIONS                          */
+        /* ═══════════════════════════════════ */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.5; }
+            50% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.5; }
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes checkPop {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .animate-in {
+            animation: fadeUp 0.5s ease-out both;
+        }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+
+        /* ═══════════════════════════════════ */
+        /* HOME MENU                           */
+        /* ═══════════════════════════════════ */
+        .home-greeting {
+            text-align: center;
+            margin-bottom: 24px;
+            animation: fadeUp 0.5s ease-out;
+        }
+        .home-greeting h2 {
+            font-family: 'Lora', serif;
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--azul);
+            margin-bottom: 4px;
+        }
+        .home-greeting p {
+            font-size: 13px;
+            color: var(--grafite-light);
+            font-weight: 400;
+        }
+
+        .home-menu { display: flex; flex-direction: column; gap: 14px; }
+
+        .menu-btn {
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            padding: 0;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            display: flex;
+            align-items: stretch;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            text-align: left;
+        }
+        .menu-btn:active { transform: scale(0.98); box-shadow: var(--shadow-sm); }
+
+        .menu-stripe {
+            width: 5px;
+            flex-shrink: 0;
+        }
+        .menu-open .menu-stripe { background: linear-gradient(180deg, var(--dourado), var(--dourado-light)); }
+        .menu-close .menu-stripe { background: linear-gradient(180deg, var(--azul), var(--azul-soft)); }
+        .menu-move .menu-stripe { background: linear-gradient(180deg, var(--verde), var(--verde-light)); }
+
+        .menu-content {
+            padding: 20px 18px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+        }
+        .menu-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+            position: relative;
+        }
+        .menu-open .menu-icon { background: var(--dourado-glow); }
+        .menu-close .menu-icon { background: rgba(15,31,58,0.06); }
+        .menu-move .menu-icon { background: var(--verde-bg); }
+
+        .menu-text { flex: 1; }
+        .menu-text h3 {
+            font-family: 'Lora', serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--azul);
+            margin-bottom: 3px;
+        }
+        .menu-text p {
+            font-size: 12px;
+            color: var(--grafite-light);
+            font-weight: 400;
+            line-height: 1.4;
+        }
+        .menu-arrow {
+            color: var(--dourado);
+            font-size: 18px;
+            padding-right: 16px;
+            display: flex;
+            align-items: center;
+            opacity: 0.4;
+        }
+
+        /* ═══════════════════════════════════ */
+        /* CARDS                               */
+        /* ═══════════════════════════════════ */
         .card {
             background: var(--card);
             border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 20px 16px;
-            margin-bottom: 16px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            padding: 22px 18px;
+            margin-bottom: 14px;
         }
         .card-title {
+            font-family: 'Lora', serif;
             font-size: 13px;
             font-weight: 600;
-            color: var(--text-secondary);
+            color: var(--azul);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             margin-bottom: 16px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
-        .card-title .icon {
-            width: 20px; height: 20px;
-            background: var(--primary);
+        .card-title .step {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, var(--azul), var(--azul-soft));
             color: white;
-            border-radius: 6px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 11px; flex-shrink: 0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Poppins', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            flex-shrink: 0;
         }
 
-        /* ── FIELDS ── */
+        /* ═══════════════════════════════════ */
+        /* CYLINDER BANNER                     */
+        /* ═══════════════════════════════════ */
+        .cyl-banner {
+            background: linear-gradient(135deg, var(--azul) 0%, var(--azul-soft) 100%);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            padding: 24px 20px;
+            margin-bottom: 16px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .cyl-banner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(160,137,108,0.12) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .cyl-tag {
+            display: inline-block;
+            font-family: 'Poppins', sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 5px 14px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        .cyl-banner.n2o .cyl-tag { background: rgba(74,158,142,0.2); color: var(--verde-light); }
+        .cyl-banner.o2 .cyl-tag { background: rgba(160,137,108,0.2); color: var(--dourado-light); }
+        .cyl-id {
+            font-family: 'Lora', serif;
+            font-size: 30px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            position: relative;
+        }
+        .cyl-cap {
+            font-size: 13px;
+            opacity: 0.6;
+            font-weight: 300;
+            position: relative;
+        }
+
+        /* ═══════════════════════════════════ */
+        /* VALVE HEADER                        */
+        /* ═══════════════════════════════════ */
+        .valve-header {
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            padding: 28px 20px;
+            margin-bottom: 16px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .valve-header.opening {
+            background: linear-gradient(135deg, #8B6914 0%, var(--dourado) 50%, var(--dourado-light) 100%);
+        }
+        .valve-header.closing {
+            background: linear-gradient(135deg, var(--azul) 0%, var(--azul-soft) 50%, var(--azul-glow) 100%);
+        }
+        .valve-header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .valve-header .valve-icon { font-size: 38px; margin-bottom: 10px; position: relative; }
+        .valve-header h2 {
+            font-family: 'Lora', serif;
+            font-size: 22px;
+            font-weight: 600;
+            position: relative;
+        }
+        .valve-header p {
+            font-size: 13px;
+            opacity: 0.7;
+            font-weight: 300;
+            margin-top: 4px;
+            position: relative;
+        }
+
+        /* ═══════════════════════════════════ */
+        /* FIELDS                              */
+        /* ═══════════════════════════════════ */
         .field { margin-bottom: 16px; }
         .field:last-child { margin-bottom: 0; }
-        label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--grafite-light);
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+        }
         input {
-            width: 100%; padding: 14px 12px;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 16px;
+            width: 100%;
+            padding: 15px 14px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            font-weight: 400;
             border: 2px solid var(--border);
-            border-radius: 10px;
-            background: white; color: var(--text);
-            transition: border-color 0.2s;
+            border-radius: var(--radius-sm);
+            background: var(--marfim);
+            color: var(--grafite);
+            transition: all 0.3s;
             -webkit-appearance: none;
         }
-        input:focus { outline: none; border-color: var(--primary); }
-
-        /* ── ACTION BUTTONS ── */
-        .action-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .action-btn {
-            padding: 16px 8px;
-            border: 2px solid var(--border);
-            border-radius: 10px;
+        input::placeholder { color: rgba(45,45,58,0.3); }
+        input:focus {
+            outline: none;
+            border-color: var(--dourado);
             background: white;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 14px; font-weight: 600;
-            color: var(--text-secondary);
-            cursor: pointer; text-align: center;
-            transition: all 0.2s; line-height: 1.3;
+            box-shadow: var(--shadow-gold);
         }
-        .action-btn .emoji { display: block; font-size: 28px; margin-bottom: 6px; }
-        .action-btn.selected-out { border-color: var(--error); background: var(--error-bg); color: var(--error); }
-        .action-btn.selected-in { border-color: var(--success); background: var(--success-bg); color: var(--success); }
 
-        /* ── LOCATION BUTTONS ── */
-        .loc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .loc-btn {
-            padding: 14px 8px;
+        /* ═══════════════════════════════════ */
+        /* ACTION BUTTONS                      */
+        /* ═══════════════════════════════════ */
+        .action-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .action-btn {
+            padding: 20px 10px;
             border: 2px solid var(--border);
-            border-radius: 10px;
+            border-radius: var(--radius-sm);
             background: white;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 14px; font-weight: 600;
-            color: var(--text);
-            cursor: pointer; text-align: center;
-            transition: all 0.15s;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--grafite-light);
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            line-height: 1.3;
+        }
+        .action-btn .emoji {
+            display: block;
+            font-size: 32px;
+            margin-bottom: 8px;
+            transition: transform 0.3s;
+        }
+        .action-btn:active .emoji { transform: scale(1.15); }
+        .action-btn.selected-out {
+            border-color: var(--terra);
+            background: var(--terra-bg);
+            color: var(--terra);
+            box-shadow: 0 4px 15px rgba(184,92,74,0.12);
+        }
+        .action-btn.selected-in {
+            border-color: var(--verde);
+            background: var(--verde-bg);
+            color: var(--verde);
+            box-shadow: 0 4px 15px rgba(74,158,142,0.12);
+        }
+
+        /* ═══════════════════════════════════ */
+        /* LOCATION BUTTONS                    */
+        /* ═══════════════════════════════════ */
+        .loc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .loc-btn {
+            padding: 16px 10px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--grafite);
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.25s;
         }
         .loc-btn:active { transform: scale(0.97); }
-        .loc-btn .loc-icon { display: block; font-size: 22px; margin-bottom: 4px; }
-        .loc-btn.selected { border-color: var(--primary); background: #E8F0ED; color: var(--primary); }
-
-        /* ── SUBMIT ── */
-        .submit-btn {
-            width: 100%; padding: 18px;
-            background: var(--primary); color: white;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 16px; font-weight: 700;
-            border: none; border-radius: 12px;
-            cursor: pointer; transition: all 0.2s;
-            letter-spacing: 0.5px; margin-top: 8px;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+        .loc-btn .loc-icon {
+            display: block;
+            font-size: 24px;
+            margin-bottom: 6px;
+            transition: transform 0.3s;
         }
-        .submit-btn:active { transform: scale(0.98); background: var(--primary-light); }
-        .submit-btn:disabled { background: var(--border); color: var(--text-secondary); cursor: not-allowed; transform: none; }
+        .loc-btn:active .loc-icon { transform: scale(1.15); }
+        .loc-btn.selected {
+            border-color: var(--verde);
+            background: var(--verde-bg);
+            color: var(--verde);
+            box-shadow: 0 4px 15px rgba(74,158,142,0.1);
+        }
+
+        /* ═══════════════════════════════════ */
+        /* VALVE CHECKLIST                     */
+        /* ═══════════════════════════════════ */
+        .valve-list { display: flex; flex-direction: column; gap: 10px; }
+        .valve-item {
+            padding: 16px 14px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            transition: all 0.25s;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        .valve-item:active { transform: scale(0.98); }
+        .valve-item.checked {
+            border-color: var(--verde);
+            background: var(--verde-bg);
+        }
+        .valve-check {
+            width: 30px;
+            height: 30px;
+            border-radius: 10px;
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.25s;
+            font-size: 14px;
+            font-weight: 700;
+            color: transparent;
+        }
+        .valve-item.checked .valve-check {
+            background: var(--verde);
+            border-color: var(--verde);
+            color: white;
+            animation: checkPop 0.3s ease-out;
+        }
+        .valve-info { flex: 1; }
+        .valve-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--azul);
+            font-family: 'Lora', serif;
+        }
+        .valve-item.checked .valve-name { color: var(--verde); }
+        .valve-loc { font-size: 11px; color: var(--grafite-light); margin-top: 2px; }
+
+        /* ═══════════════════════════════════ */
+        /* SUBMIT                              */
+        /* ═══════════════════════════════════ */
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--azul) 0%, var(--azul-soft) 100%);
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 0.5px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+        .submit-btn:not(:disabled):active::before { left: 100%; }
+        .submit-btn:active:not(:disabled) { transform: scale(0.98); }
+        .submit-btn:disabled {
+            background: var(--border);
+            color: var(--grafite-light);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .submit-btn.opening-btn {
+            background: linear-gradient(135deg, #8B6914, var(--dourado));
+        }
+        .submit-btn.closing-btn {
+            background: linear-gradient(135deg, var(--azul), var(--azul-soft));
+        }
 
         .error-msg {
-            background: var(--error-bg); color: var(--error);
-            font-size: 13px; padding: 10px 12px; border-radius: 8px;
-            margin-top: 8px; display: none;
+            background: var(--terra-bg);
+            color: var(--terra);
+            font-size: 13px;
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            margin-top: 10px;
+            display: none;
+            border: 1px solid rgba(184,92,74,0.2);
         }
         .error-msg.show { display: block; }
 
         .spinner {
-            width: 20px; height: 20px;
+            width: 20px;
+            height: 20px;
             border: 3px solid rgba(255,255,255,0.3);
-            border-top-color: white; border-radius: 50%;
-            animation: spin 0.6s linear infinite; display: none;
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: none;
         }
         .spinner.show { display: block; }
-        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ── MODALS ── */
+        /* ═══════════════════════════════════ */
+        /* MODALS                              */
+        /* ═══════════════════════════════════ */
         .feedback {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 200; opacity: 0; pointer-events: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15,31,58,0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
             transition: opacity 0.3s;
         }
         .feedback.show { opacity: 1; pointer-events: auto; }
         .feedback-box {
-            background: white; border-radius: 16px;
-            padding: 32px 24px; text-align: center;
-            max-width: 320px; width: 90%;
-            transform: scale(0.9); transition: transform 0.3s;
+            background: white;
+            border-radius: 20px;
+            padding: 36px 24px 28px;
+            text-align: center;
+            max-width: 340px;
+            width: 90%;
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-lg);
         }
-        .feedback.show .feedback-box { transform: scale(1); }
+        .feedback.show .feedback-box { transform: scale(1) translateY(0); }
         .feedback-box .check {
-            width: 56px; height: 56px;
-            background: var(--success-bg); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 28px; margin: 0 auto 16px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--verde), var(--verde-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 18px;
+            color: white;
+            box-shadow: 0 6px 20px rgba(74,158,142,0.3);
         }
-        .feedback-box h3 { font-size: 18px; margin-bottom: 6px; }
-        .feedback-box p { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; white-space: pre-line; }
+        .feedback-box h3 {
+            font-family: 'Lora', serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--azul);
+            margin-bottom: 6px;
+        }
+        .feedback-box p {
+            font-size: 14px;
+            color: var(--grafite-light);
+            margin-bottom: 22px;
+            line-height: 1.6;
+            white-space: pre-line;
+        }
         .modal-actions { display: flex; flex-direction: column; gap: 10px; }
         .modal-actions button {
-            padding: 14px 32px; background: var(--primary); color: white;
-            border: none; border-radius: 10px;
-            font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
-            cursor: pointer; width: 100%;
+            padding: 15px 24px;
+            background: linear-gradient(135deg, var(--azul), var(--azul-soft));
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+            box-shadow: var(--shadow-sm);
         }
-        .btn-secondary { background: transparent !important; color: var(--text-secondary) !important; border: 2px solid var(--border) !important; }
+        .modal-actions button:active { transform: scale(0.98); }
+        .btn-secondary {
+            background: transparent !important;
+            color: var(--grafite-light) !important;
+            border: 2px solid var(--border) !important;
+            box-shadow: none !important;
+        }
 
         .confirm-summary {
-            background: #F7F5F2; border-radius: 10px; padding: 14px;
-            margin-bottom: 16px; font-size: 14px; line-height: 1.7;
+            background: var(--marfim);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin-bottom: 18px;
+            font-size: 13px;
+            line-height: 1.8;
             text-align: left;
+            border: 1px solid var(--border);
         }
         .confirm-summary .row { display: flex; justify-content: space-between; }
-        .confirm-summary .label { color: var(--text-secondary); }
-        .confirm-summary .value { font-weight: 600; text-align: right; }
+        .confirm-summary .label { color: var(--grafite-light); font-weight: 400; }
+        .confirm-summary .value { font-weight: 600; color: var(--azul); text-align: right; max-width: 60%; }
 
-        .last-record {
-            font-size: 12px; color: var(--text-secondary);
-            padding: 10px 12px; background: #F7F5F2;
-            border-radius: 8px; margin-top: 12px; line-height: 1.5;
+        /* ═══════════════════════════════════ */
+        /* SCAN SCREEN                         */
+        /* ═══════════════════════════════════ */
+        .scan-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            padding: 48px 24px;
+            text-align: center;
         }
-        .last-record strong { color: var(--text); }
-        .footer { text-align: center; font-size: 11px; color: var(--text-secondary); margin-top: 24px; padding-bottom: 24px; }
+        .scan-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--marfim-warm);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin: 0 auto 20px;
+            animation: pulse-ring 2s ease-in-out infinite;
+        }
+        .scan-card h2 {
+            font-family: 'Lora', serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--azul);
+            margin-bottom: 10px;
+        }
+        .scan-card p {
+            font-size: 14px;
+            color: var(--grafite-light);
+            line-height: 1.7;
+            font-weight: 400;
+        }
+
+        /* ═══════════════════════════════════ */
+        /* LAST RECORD & FOOTER               */
+        /* ═══════════════════════════════════ */
+        .last-record {
+            font-size: 12px;
+            color: var(--grafite-light);
+            padding: 12px 14px;
+            background: var(--card);
+            border-radius: var(--radius-sm);
+            margin-top: 14px;
+            line-height: 1.6;
+            border: 1px solid var(--border);
+        }
+        .last-record strong { color: var(--azul); }
+
+        .footer {
+            text-align: center;
+            margin-top: 32px;
+            padding-bottom: 28px;
+        }
+        .footer-divider {
+            width: 40px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--dourado), transparent);
+            margin: 0 auto 12px;
+        }
+        .footer-brand {
+            font-family: 'Lora', serif;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--dourado);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .footer-sub {
+            font-size: 10px;
+            color: rgba(45,45,58,0.35);
+            margin-top: 4px;
+            font-weight: 400;
+        }
+        .footer-dev {
+            font-size: 9px;
+            color: rgba(45,45,58,0.25);
+            margin-top: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        /* ═══════════════════════════════════ */
+        /* SCREEN MANAGEMENT                   */
+        /* ═══════════════════════════════════ */
+        .screen { display: none; }
+        .screen.active { display: block; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <h1>WELL CLINIC — CILINDROS</h1>
-    <p>Registro de movimentação de gases</p>
+    <div class="header-inner">
+        <button class="back-btn" id="backBtn" onclick="goHome()">←</button>
+        <div class="header-logo">Well Clinic</div>
+        <h1>Controle de Gases Medicinais</h1>
+        <div class="header-divider"></div>
+        <div class="header-sub">Sistema de Registro e Rastreabilidade</div>
+    </div>
 </div>
 
 <div class="container">
 
-    <!-- ════ NO QR ════ -->
-    <div id="stateNoQR" class="no-qr">
-        <div class="icon-scan">📷</div>
-        <h2>Escaneie o QR Code</h2>
-        <p>Use a câmera do celular para ler o QR Code colado no cilindro.<br><br>O cilindro será identificado automaticamente.</p>
+    <!-- ════ HOME ════ -->
+    <div class="screen active" id="screenHome">
+        <div class="home-greeting">
+            <h2>O que deseja registrar?</h2>
+            <p>Selecione a operação abaixo</p>
+        </div>
+        <div class="home-menu">
+            <div class="menu-btn menu-open animate-in delay-1" onclick="startValve('abertura')">
+                <div class="menu-stripe"></div>
+                <div class="menu-content">
+                    <div class="menu-icon">🔓</div>
+                    <div class="menu-text">
+                        <h3>Abertura de Válvulas</h3>
+                        <p>Registre a abertura das válvulas no início do expediente. Obrigatório para rastreabilidade.</p>
+                    </div>
+                </div>
+                <div class="menu-arrow">›</div>
+            </div>
+            <div class="menu-btn menu-close animate-in delay-2" onclick="startValve('fechamento')">
+                <div class="menu-stripe"></div>
+                <div class="menu-content">
+                    <div class="menu-icon">🔒</div>
+                    <div class="menu-text">
+                        <h3>Fechamento de Válvulas</h3>
+                        <p>Registre o fechamento ao final do dia. Garante a segurança dos cilindros em repouso.</p>
+                    </div>
+                </div>
+                <div class="menu-arrow">›</div>
+            </div>
+            <div class="menu-btn menu-move animate-in delay-3" onclick="startMove()">
+                <div class="menu-stripe"></div>
+                <div class="menu-content">
+                    <div class="menu-icon">🔄</div>
+                    <div class="menu-text">
+                        <h3>Movimentação de Cilindros</h3>
+                        <p>Escaneie o QR Code do cilindro para registrar troca, reposição ou retirada.</p>
+                    </div>
+                </div>
+                <div class="menu-arrow">›</div>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="footer-divider"></div>
+            <div class="footer-brand">Well Clinic</div>
+            <div class="footer-sub">Gases Medicinais · Rastreabilidade · Auditoria</div>
+            <div class="footer-dev">Desenvolvido por Jonatã Schneider</div>
+        </div>
     </div>
 
-    <!-- ════ FORM ════ -->
-    <div id="stateForm" style="display: none;">
+    <!-- ════ VALVE ════ -->
+    <div class="screen" id="screenValve">
+        <div class="valve-header animate-in" id="valveHeader">
+            <div class="valve-icon" id="valveIcon">🔓</div>
+            <h2 id="valveTitle">Abertura de Válvulas</h2>
+            <p id="valveSubtitle">Marque cada válvula após a abertura</p>
+        </div>
 
-        <div class="cyl-banner" id="cylBanner">
+        <div class="card animate-in delay-1">
+            <div class="card-title"><span class="step">1</span> Responsável</div>
+            <div class="field">
+                <label for="valveOperador">Quem está realizando a operação?</label>
+                <input type="text" id="valveOperador" placeholder="Digite seu nome completo" autocomplete="name">
+            </div>
+        </div>
+
+        <div class="card animate-in delay-2">
+            <div class="card-title"><span class="step">2</span> Válvulas</div>
+            <label style="margin-bottom:12px;font-size:12px;">Toque em cada válvula conforme realizar a operação:</label>
+            <div class="valve-list" id="valveList">
+                <div class="valve-item" data-valve="Sala 8 — Oxigênio" onclick="toggleValve(this)">
+                    <div class="valve-check">✓</div>
+                    <div class="valve-info">
+                        <div class="valve-name">Oxigênio</div>
+                        <div class="valve-loc">📍 Sala 8</div>
+                    </div>
+                </div>
+                <div class="valve-item" data-valve="Sala 8 — Nitroso" onclick="toggleValve(this)">
+                    <div class="valve-check">✓</div>
+                    <div class="valve-info">
+                        <div class="valve-name">Óxido Nitroso</div>
+                        <div class="valve-loc">📍 Sala 8</div>
+                    </div>
+                </div>
+                <div class="valve-item" data-valve="Armário — Oxigênio" onclick="toggleValve(this)">
+                    <div class="valve-check">✓</div>
+                    <div class="valve-info">
+                        <div class="valve-name">Oxigênio</div>
+                        <div class="valve-loc">📍 Armário Externo</div>
+                    </div>
+                </div>
+                <div class="valve-item" data-valve="Armário — Nitroso" onclick="toggleValve(this)">
+                    <div class="valve-check">✓</div>
+                    <div class="valve-info">
+                        <div class="valve-name">Óxido Nitroso</div>
+                        <div class="valve-loc">📍 Armário Externo</div>
+                    </div>
+                </div>
+                <div class="valve-item" data-valve="Esterilização — Oxigênio" onclick="toggleValve(this)">
+                    <div class="valve-check">✓</div>
+                    <div class="valve-info">
+                        <div class="valve-name">Oxigênio</div>
+                        <div class="valve-loc">📍 Esterilização</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card animate-in delay-3">
+            <div class="card-title"><span class="step">3</span> Observação <span style="font-weight:300;text-transform:none;letter-spacing:0;color:var(--grafite-light);">(opcional)</span></div>
+            <div class="field">
+                <input type="text" id="valveObs" placeholder="Ex: válvula com dificuldade de girar">
+            </div>
+        </div>
+
+        <button class="submit-btn" id="valveSubmitBtn" onclick="confirmValve()" disabled>
+            <span class="spinner" id="valveSpinner"></span>
+            <span id="valveSubmitText">Registrar</span>
+        </button>
+        <div class="error-msg" id="valveErrorMsg"></div>
+        <div class="footer">
+            <div class="footer-divider"></div>
+            <div class="footer-brand">Well Clinic</div>
+            <div class="footer-dev">Desenvolvido por Jonatã Schneider</div>
+        </div>
+    </div>
+
+    <!-- ════ SCAN QR ════ -->
+    <div class="screen" id="screenScan">
+        <div class="scan-card animate-in">
+            <div class="scan-icon">📷</div>
+            <h2>Escaneie o QR Code</h2>
+            <p>Aponte a câmera do celular para o<br>QR Code fixado no cilindro.<br><br>
+            A identificação será feita<br>automaticamente — sem digitação,<br>sem margem de erro.</p>
+        </div>
+        <div class="footer">
+            <div class="footer-divider"></div>
+            <div class="footer-brand">Well Clinic</div>
+            <div class="footer-dev">Desenvolvido por Jonatã Schneider</div>
+        </div>
+    </div>
+
+    <!-- ════ MOVEMENT ════ -->
+    <div class="screen" id="screenMove">
+        <div class="cyl-banner animate-in" id="cylBanner">
             <span class="cyl-tag" id="cylTag">—</span>
             <div class="cyl-id" id="cylId">—</div>
             <div class="cyl-cap" id="cylCap">—</div>
         </div>
 
-        <div class="card">
-            <div class="card-title"><span class="icon">1</span> Operador</div>
+        <div class="card animate-in delay-1">
+            <div class="card-title"><span class="step">1</span> Operador</div>
             <div class="field">
-                <label for="operador">Nome do operador</label>
-                <input type="text" id="operador" placeholder="Digite seu nome" autocomplete="name">
+                <label for="moveOperador">Quem está realizando a movimentação?</label>
+                <input type="text" id="moveOperador" placeholder="Digite seu nome completo" autocomplete="name">
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-title"><span class="icon">2</span> Ação</div>
+        <div class="card animate-in delay-2">
+            <div class="card-title"><span class="step">2</span> Ação</div>
+            <label style="margin-bottom:12px;font-size:12px;">O que está sendo feito com este cilindro?</label>
             <div class="action-toggle">
                 <button type="button" class="action-btn" data-action="Retirada (Vazio)" onclick="selectAction(this)">
                     <span class="emoji">🔴</span>Retirar Vazio
@@ -289,9 +993,9 @@
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-title"><span class="icon">3</span> Localização</div>
-            <label style="margin-bottom: 10px;">Onde está sendo instalado / retirado?</label>
+        <div class="card animate-in delay-3">
+            <div class="card-title"><span class="step">3</span> Localização</div>
+            <label style="margin-bottom:12px;font-size:12px;">Em qual ponto o cilindro está sendo instalado ou retirado?</label>
             <div class="loc-grid">
                 <button type="button" class="loc-btn" data-loc="Armário Externo" onclick="selectLocation(this)">
                     <span class="loc-icon">🚪</span>Armário Externo
@@ -302,42 +1006,50 @@
                 <button type="button" class="loc-btn" data-loc="Expurgo" onclick="selectLocation(this)">
                     <span class="loc-icon">🧹</span>Expurgo
                 </button>
-                <button type="button" class="loc-btn" data-loc="Outra" onclick="selectLocation(this)">
-                    <span class="loc-icon">📍</span>Outra
+                <button type="button" class="loc-btn" data-loc="Esterilização" onclick="selectLocation(this)">
+                    <span class="loc-icon">🧫</span>Esterilização
+                </button>
+                <button type="button" class="loc-btn" data-loc="Outra" onclick="selectLocation(this)" style="grid-column:span 2;">
+                    <span class="loc-icon">📍</span>Outra localização
                 </button>
             </div>
-            <div class="field" id="outraField" style="display: none; margin-top: 12px;">
-                <input type="text" id="outraLoc" placeholder="Digite a localização">
+            <div class="field" id="outraField" style="display:none;margin-top:12px;">
+                <input type="text" id="outraLoc" placeholder="Informe a localização">
             </div>
         </div>
 
         <div class="card">
-            <div class="card-title"><span class="icon">4</span> Observação <span style="font-weight:400;text-transform:none;letter-spacing:0;">(opcional)</span></div>
+            <div class="card-title"><span class="step">4</span> Observação <span style="font-weight:300;text-transform:none;letter-spacing:0;color:var(--grafite-light);">(opcional)</span></div>
             <div class="field">
-                <input type="text" id="observacao" placeholder="Ex: válvula travada, cilindro amassado">
+                <input type="text" id="moveObs" placeholder="Ex: válvula travada, cilindro com avaria">
             </div>
         </div>
 
-        <button class="submit-btn" id="submitBtn" onclick="confirmRecord()" disabled>
-            <span class="spinner" id="loadingSpinner"></span>
-            <span id="submitText">Registrar Movimentação</span>
+        <button class="submit-btn" id="moveSubmitBtn" onclick="confirmMove()" disabled>
+            <span class="spinner" id="moveSpinner"></span>
+            <span id="moveSubmitText">Registrar Movimentação</span>
         </button>
-        <div class="error-msg" id="errorMsg"></div>
+        <div class="error-msg" id="moveErrorMsg"></div>
 
-        <div class="last-record" id="lastRecord" style="display: none;">
+        <div class="last-record" id="lastRecord" style="display:none;">
             <strong>Último registro:</strong><br><span id="lastRecordText"></span>
         </div>
-        <p class="footer">Well Clinic — Controle de Cilindros<br>Dados registrados automaticamente na planilha</p>
+        <div class="footer">
+            <div class="footer-divider"></div>
+            <div class="footer-brand">Well Clinic</div>
+            <div class="footer-dev">Desenvolvido por Jonatã Schneider</div>
+        </div>
     </div>
+
 </div>
 
 <!-- CONFIRM MODAL -->
 <div class="feedback" id="confirmModal">
     <div class="feedback-box">
-        <h3>Confirmar registro?</h3>
+        <h3 id="confirmTitle">Confirmar registro?</h3>
         <div class="confirm-summary" id="confirmSummary"></div>
         <div class="modal-actions">
-            <button onclick="submitRecord()">Confirmar e Registrar</button>
+            <button id="confirmBtn" onclick="submitCurrent()">Confirmar e Registrar</button>
             <button class="btn-secondary" onclick="closeConfirm()">Voltar e Corrigir</button>
         </div>
     </div>
@@ -347,20 +1059,16 @@
 <div class="feedback" id="successModal">
     <div class="feedback-box">
         <div class="check">✓</div>
-        <h3>Registrado!</h3>
+        <h3>Registro Concluído</h3>
         <p id="successText"></p>
         <div class="modal-actions">
-            <button onclick="resetForm()">Novo Registro (mesmo cilindro)</button>
-            <button class="btn-secondary" onclick="window.location.href=window.location.pathname">Escanear outro cilindro</button>
+            <button onclick="goHome()">Voltar ao Início</button>
         </div>
     </div>
 </div>
 
 <script>
-// ══════════════════════════════════════════════════════════════
-// ⚠️  Cole aqui a URL do seu Google Apps Script
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJqDDH8h5gaybLSk1v11-JOYL-FMvHot1BI9fq1mo5JBMWGyY4E6pG3J7ydN9SWMDUiA/exec';
-// ══════════════════════════════════════════════════════════════
 
 const CILINDROS = {
     'nitroso1':  { id: 'Nitroso 1',  tipo: 'Óxido Nitroso', capacidade: '33kg'  },
@@ -377,26 +1085,121 @@ const CILINDROS = {
     'oxigenio8': { id: 'Oxigênio 8', tipo: 'Oxigênio',      capacidade: '1,5m³' },
 };
 
+let currentScreen = 'home';
 let currentCylinder = null;
 let selectedAction = null;
 let selectedLocation = null;
+let currentValveMode = null;
+let pendingPayload = null;
 
 function init() {
     const params = new URLSearchParams(window.location.search);
     const cid = params.get('cid');
     if (cid && CILINDROS[cid]) {
         currentCylinder = CILINDROS[cid];
-        showForm();
+        showScreen('move');
+        setupMoveForm();
     }
     const saved = localStorage.getItem('wc_operador');
-    if (saved) document.getElementById('operador').value = saved;
+    if (saved) {
+        document.getElementById('moveOperador').value = saved;
+        document.getElementById('valveOperador').value = saved;
+    }
 }
 
-function showForm() {
-    document.getElementById('stateNoQR').style.display = 'none';
-    document.getElementById('stateForm').style.display = 'block';
+function showScreen(name) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    currentScreen = name;
+    const backBtn = document.getElementById('backBtn');
+    const screenId = {
+        home: 'screenHome', valve: 'screenValve',
+        scan: 'screenScan', move: 'screenMove'
+    };
+    document.getElementById(screenId[name]).classList.add('active');
+    backBtn.classList.toggle('show', name !== 'home');
+    window.scrollTo(0, 0);
+}
+
+function goHome() {
+    selectedAction = null;
+    selectedLocation = null;
+    currentValveMode = null;
+    currentCylinder = null;
+    document.querySelectorAll('.action-btn').forEach(b => b.classList.remove('selected-out','selected-in'));
+    document.querySelectorAll('.loc-btn').forEach(b => b.classList.remove('selected'));
+    document.querySelectorAll('.valve-item').forEach(v => v.classList.remove('checked'));
+    document.getElementById('outraField').style.display = 'none';
+    document.getElementById('outraLoc').value = '';
+    document.getElementById('moveObs').value = '';
+    document.getElementById('valveObs').value = '';
+    document.getElementById('moveSubmitBtn').disabled = true;
+    document.getElementById('valveSubmitBtn').disabled = true;
+    document.getElementById('successModal').classList.remove('show');
+    document.getElementById('confirmModal').classList.remove('show');
+    window.history.replaceState({}, '', window.location.pathname);
+    showScreen('home');
+}
+
+// ── VALVE ──
+function startValve(mode) {
+    currentValveMode = mode;
+    const header = document.getElementById('valveHeader');
+    const btn = document.getElementById('valveSubmitBtn');
+    if (mode === 'abertura') {
+        header.className = 'valve-header opening animate-in';
+        document.getElementById('valveIcon').textContent = '🔓';
+        document.getElementById('valveTitle').textContent = 'Abertura de Válvulas';
+        document.getElementById('valveSubtitle').textContent = 'Marque cada válvula após realizar a abertura';
+        document.getElementById('valveSubmitText').textContent = 'Registrar Abertura';
+        btn.className = 'submit-btn opening-btn';
+    } else {
+        header.className = 'valve-header closing animate-in';
+        document.getElementById('valveIcon').textContent = '🔒';
+        document.getElementById('valveTitle').textContent = 'Fechamento de Válvulas';
+        document.getElementById('valveSubtitle').textContent = 'Marque cada válvula após realizar o fechamento';
+        document.getElementById('valveSubmitText').textContent = 'Registrar Fechamento';
+        btn.className = 'submit-btn closing-btn';
+    }
+    const saved = localStorage.getItem('wc_operador');
+    if (saved) document.getElementById('valveOperador').value = saved;
+    showScreen('valve');
+}
+
+function toggleValve(el) {
+    el.classList.toggle('checked');
+    checkValveReady();
+}
+
+function checkValveReady() {
+    const name = document.getElementById('valveOperador').value.trim();
+    const checked = document.querySelectorAll('.valve-item.checked').length;
+    document.getElementById('valveSubmitBtn').disabled = !(name && checked > 0);
+}
+document.getElementById('valveOperador').addEventListener('input', checkValveReady);
+
+function confirmValve() {
+    const operador = document.getElementById('valveOperador').value.trim();
+    const checked = Array.from(document.querySelectorAll('.valve-item.checked')).map(el => el.dataset.valve);
+    const obs = document.getElementById('valveObs').value.trim();
+    const label = currentValveMode === 'abertura' ? '🔓 Abertura' : '🔒 Fechamento';
+    let h = '';
+    h += `<div class="row"><span class="label">Operação</span><span class="value">${label}</span></div>`;
+    h += `<div class="row"><span class="label">Responsável</span><span class="value">${operador}</span></div>`;
+    h += `<div class="row"><span class="label">Válvulas</span><span class="value">${checked.length} de 5</span></div>`;
+    checked.forEach(v => { h += `<div class="row"><span class="label"></span><span class="value" style="font-size:12px;font-weight:500;color:var(--verde);">✓ ${v}</span></div>`; });
+    if (obs) h += `<div class="row"><span class="label">Obs</span><span class="value">${obs}</span></div>`;
+    document.getElementById('confirmSummary').innerHTML = h;
+    document.getElementById('confirmTitle').textContent = `Confirmar ${currentValveMode}?`;
+    pendingPayload = { tipo_registro: 'valvula', operador, acao: currentValveMode === 'abertura' ? 'Abertura' : 'Fechamento', valvulas: checked.join(', '), observacao: obs || '—' };
+    document.getElementById('confirmModal').classList.add('show');
+}
+
+// ── MOVEMENT ──
+function startMove() { showScreen('scan'); }
+
+function setupMoveForm() {
     const isN2O = currentCylinder.tipo === 'Óxido Nitroso';
-    document.getElementById('cylBanner').className = 'cyl-banner ' + (isN2O ? 'n2o' : 'o2');
+    document.getElementById('cylBanner').className = 'cyl-banner animate-in ' + (isN2O ? 'n2o' : 'o2');
     document.getElementById('cylTag').textContent = currentCylinder.tipo;
     document.getElementById('cylId').textContent = currentCylinder.id;
     document.getElementById('cylCap').textContent = 'Capacidade: ' + currentCylinder.capacidade;
@@ -406,7 +1209,7 @@ function selectAction(btn) {
     document.querySelectorAll('.action-btn').forEach(b => b.classList.remove('selected-out','selected-in'));
     selectedAction = btn.dataset.action;
     btn.classList.add(selectedAction.includes('Retirada') ? 'selected-out' : 'selected-in');
-    checkReady();
+    checkMoveReady();
 }
 
 function selectLocation(btn) {
@@ -420,28 +1223,23 @@ function selectLocation(btn) {
         document.getElementById('outraLoc').value = '';
         selectedLocation = btn.dataset.loc;
     }
-    checkReady();
+    checkMoveReady();
 }
 
 function getLocation() {
-    if (selectedLocation) return selectedLocation;
-    return document.getElementById('outraLoc').value.trim() || null;
+    return selectedLocation || document.getElementById('outraLoc').value.trim() || null;
 }
 
-function checkReady() {
-    const ok = document.getElementById('operador').value.trim() && selectedAction && getLocation();
-    document.getElementById('submitBtn').disabled = !ok;
+function checkMoveReady() {
+    document.getElementById('moveSubmitBtn').disabled = !(document.getElementById('moveOperador').value.trim() && selectedAction && getLocation());
 }
+document.getElementById('moveOperador').addEventListener('input', checkMoveReady);
+document.getElementById('outraLoc').addEventListener('input', checkMoveReady);
 
-document.getElementById('operador').addEventListener('input', checkReady);
-document.getElementById('outraLoc').addEventListener('input', checkReady);
-
-function confirmRecord() {
-    const operador = document.getElementById('operador').value.trim();
+function confirmMove() {
+    const operador = document.getElementById('moveOperador').value.trim();
     const loc = getLocation();
-    const obs = document.getElementById('observacao').value.trim();
-    if (!operador || !selectedAction || !loc) return;
-
+    const obs = document.getElementById('moveObs').value.trim();
     const emoji = selectedAction.includes('Retirada') ? '🔴' : '🟢';
     let h = '';
     h += `<div class="row"><span class="label">Cilindro</span><span class="value">${currentCylinder.id}</span></div>`;
@@ -452,71 +1250,44 @@ function confirmRecord() {
     h += `<div class="row"><span class="label">Operador</span><span class="value">${operador}</span></div>`;
     if (obs) h += `<div class="row"><span class="label">Obs</span><span class="value">${obs}</span></div>`;
     document.getElementById('confirmSummary').innerHTML = h;
+    document.getElementById('confirmTitle').textContent = 'Confirmar movimentação?';
+    pendingPayload = { tipo_registro: 'movimentacao', operador, acao: selectedAction, cilindro_id: currentCylinder.id, tipo_gas: currentCylinder.tipo, capacidade: currentCylinder.capacidade, localizacao: loc, observacao: obs || '—' };
     document.getElementById('confirmModal').classList.add('show');
 }
 
+// ── SUBMIT ──
 function closeConfirm() { document.getElementById('confirmModal').classList.remove('show'); }
 
-async function submitRecord() {
+async function submitCurrent() {
     document.getElementById('confirmModal').classList.remove('show');
-    const operador = document.getElementById('operador').value.trim();
-    const loc = getLocation();
-    const obs = document.getElementById('observacao').value.trim();
-    const btn = document.getElementById('submitBtn');
-    const spinner = document.getElementById('loadingSpinner');
-    const submitText = document.getElementById('submitText');
-    const errorMsg = document.getElementById('errorMsg');
-
+    const isValve = pendingPayload.tipo_registro === 'valvula';
+    const btn = document.getElementById(isValve ? 'valveSubmitBtn' : 'moveSubmitBtn');
+    const spinner = document.getElementById(isValve ? 'valveSpinner' : 'moveSpinner');
+    const errorMsg = document.getElementById(isValve ? 'valveErrorMsg' : 'moveErrorMsg');
     btn.disabled = true;
     spinner.classList.add('show');
-    submitText.textContent = 'Enviando...';
     errorMsg.classList.remove('show');
-
-    const payload = {
-        operador, acao: selectedAction,
-        cilindro_id: currentCylinder.id,
-        tipo_gas: currentCylinder.tipo,
-        capacidade: currentCylinder.capacidade,
-        localizacao: loc,
-        observacao: obs || '—'
-    };
-
     try {
-        await fetch(APPS_SCRIPT_URL, {
-            method: 'POST', mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        showSuccess(payload);
+        await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(pendingPayload) });
+        localStorage.setItem('wc_operador', pendingPayload.operador);
+        if (isValve) {
+            const e = pendingPayload.acao === 'Abertura' ? '🔓' : '🔒';
+            document.getElementById('successText').textContent = `${e} ${pendingPayload.acao} registrada com sucesso\n\n${pendingPayload.valvulas.split(', ').length} válvulas · ${pendingPayload.operador}`;
+        } else {
+            const e = pendingPayload.acao.includes('Retirada') ? '🔴' : '🟢';
+            document.getElementById('successText').textContent = `${e} ${pendingPayload.acao}\n\n${pendingPayload.cilindro_id} (${pendingPayload.capacidade})\n${pendingPayload.localizacao}`;
+            const t = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+            document.getElementById('lastRecordText').textContent = `${t} · ${pendingPayload.operador} · ${e} ${pendingPayload.acao} · ${pendingPayload.cilindro_id}`;
+            document.getElementById('lastRecord').style.display = 'block';
+        }
+        document.getElementById('successModal').classList.add('show');
     } catch (err) {
-        errorMsg.textContent = 'Erro ao enviar. Verifique sua conexão.';
+        errorMsg.textContent = 'Erro de conexão. Verifique sua internet e tente novamente.';
         errorMsg.classList.add('show');
         btn.disabled = false;
     } finally {
         spinner.classList.remove('show');
-        submitText.textContent = 'Registrar Movimentação';
     }
-}
-
-function showSuccess(d) {
-    const e = d.acao.includes('Retirada') ? '🔴' : '🟢';
-    document.getElementById('successText').textContent = `${e} ${d.acao}\n${d.cilindro_id} (${d.capacidade}) — ${d.localizacao}`;
-    document.getElementById('successModal').classList.add('show');
-    const t = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-    document.getElementById('lastRecordText').textContent = `${t} · ${d.operador} · ${e} ${d.acao} · ${d.cilindro_id} · ${d.localizacao}`;
-    document.getElementById('lastRecord').style.display = 'block';
-    localStorage.setItem('wc_operador', d.operador);
-}
-
-function resetForm() {
-    document.getElementById('successModal').classList.remove('show');
-    selectedAction = null; selectedLocation = null;
-    document.querySelectorAll('.action-btn').forEach(b => b.classList.remove('selected-out','selected-in'));
-    document.querySelectorAll('.loc-btn').forEach(b => b.classList.remove('selected'));
-    document.getElementById('outraField').style.display = 'none';
-    document.getElementById('outraLoc').value = '';
-    document.getElementById('observacao').value = '';
-    document.getElementById('submitBtn').disabled = true;
 }
 
 init();
