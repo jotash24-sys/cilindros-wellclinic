@@ -46,6 +46,12 @@ body{font-family:'Poppins',sans-serif;background:var(--marfim);color:var(--grafi
 .login-spinner{width:18px;height:18px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none}
 .login-spinner.show{display:block}
 
+/* USER BADGE (auto-fill from login) */
+.user-badge{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:12px;box-shadow:var(--shadow-sm)}
+.user-badge-icon{font-size:18px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--dourado-glow);border-radius:50%;flex-shrink:0}
+.user-badge-name{font-weight:600;font-size:14px;color:var(--azul);flex:1}
+.user-badge-role{font-size:11px;color:var(--grafite-light);letter-spacing:.3px;text-transform:uppercase;font-weight:500}
+
 /* LOGOUT BTN */
 .header-logout{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.08);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);color:#fff;padding:8px 12px;border-radius:10px;font-size:11px;font-weight:500;cursor:pointer;transition:all .3s;letter-spacing:.3px}
 .header-logout:active{background:rgba(255,255,255,.15);transform:translateY(-50%) scale(.95)}
@@ -310,8 +316,9 @@ Ativar Minha Conta
 <!-- ═══ VALVE ═══ -->
 <div class="screen" id="screenValve">
 <div class="valve-header animate-in" id="valveHeader"><div class="valve-icon" id="valveIcon">🔓</div><h2 id="valveTitle">Abertura de Válvulas</h2><p id="valveSubtitle">Marque cada válvula após a abertura</p></div>
-<div class="card animate-in delay-1"><div class="card-title"><span class="step">1</span> Responsável</div><div class="field"><label>Quem está realizando?</label><input type="text" id="valveOperador" placeholder="Nome completo" autocomplete="name" readonly></div></div>
-<div class="card animate-in delay-2"><div class="card-title"><span class="step">2</span> Válvulas</div><label style="margin-bottom:12px;font-size:12px;">Toque em cada válvula conforme operar:</label>
+<div class="user-badge animate-in delay-1"><span class="user-badge-icon">👤</span><span class="user-badge-name" id="valveUserBadge">—</span><span class="user-badge-role">Responsável</span></div>
+<input type="hidden" id="valveOperador">
+<div class="card animate-in delay-2"><div class="card-title"><span class="step">1</span> Válvulas</div><label style="margin-bottom:12px;font-size:12px;">Toque em cada válvula conforme operar:</label>
 <div class="valve-list" id="valveList">
   <div class="valve-item" data-valve="Sala 8 — Oxigênio" onclick="toggleValve(this)"><div class="valve-check">✓</div><div class="valve-info"><div class="valve-name">Oxigênio</div><div class="valve-loc">📍 Sala 8</div></div></div>
   <div class="valve-item" data-valve="Sala 8 — Nitroso" onclick="toggleValve(this)"><div class="valve-check">✓</div><div class="valve-info"><div class="valve-name">Óxido Nitroso</div><div class="valve-loc">📍 Sala 8</div></div></div>
@@ -319,7 +326,7 @@ Ativar Minha Conta
   <div class="valve-item" data-valve="Armário — Nitroso" onclick="toggleValve(this)"><div class="valve-check">✓</div><div class="valve-info"><div class="valve-name">Óxido Nitroso</div><div class="valve-loc">📍 Armário Externo</div></div></div>
   <div class="valve-item" data-valve="Esterilização — Oxigênio" onclick="toggleValve(this)"><div class="valve-check">✓</div><div class="valve-info"><div class="valve-name">Oxigênio</div><div class="valve-loc">📍 Esterilização</div></div></div>
 </div></div>
-<div class="card animate-in delay-3"><div class="card-title"><span class="step">3</span> Observação <span style="font-weight:300;text-transform:none;letter-spacing:0;color:var(--grafite-light);">(opcional)</span></div><div class="field"><input type="text" id="valveObs" placeholder="Ex: válvula com dificuldade"></div></div>
+<div class="card animate-in delay-3"><div class="card-title"><span class="step">2</span> Observação <span style="font-weight:300;text-transform:none;letter-spacing:0;color:var(--grafite-light);">(opcional)</span></div><div class="field"><input type="text" id="valveObs" placeholder="Ex: válvula com dificuldade"></div></div>
 <button class="submit-btn" id="valveSubmitBtn" onclick="confirmValve()" disabled><span class="spinner" id="valveSpinner"></span><span id="valveSubmitText">Registrar</span></button>
 <div class="error-msg" id="valveErrorMsg"></div>
 <div class="footer"><div class="footer-divider"></div><div class="footer-brand">Well Clinic</div><div class="footer-dev">Desenvolvido por Jonatã Schneider</div></div>
@@ -358,15 +365,16 @@ Ativar Minha Conta
 <div class="screen" id="screenMove">
 <div class="cyl-banner animate-in" id="cylBanner"><span class="cyl-tag" id="cylTag">—</span><div class="cyl-id" id="cylId">—</div><div class="cyl-cap" id="cylCap">—</div></div>
 
-<div class="card animate-in delay-1"><div class="card-title"><span class="step">1</span> Operador</div><div class="field"><label>Quem está realizando?</label><input type="text" id="moveOperador" placeholder="Nome completo" autocomplete="name" readonly></div></div>
+<div class="user-badge animate-in delay-1"><span class="user-badge-icon">👤</span><span class="user-badge-name" id="moveUserBadge">—</span><span class="user-badge-role">Operador</span></div>
+<input type="hidden" id="moveOperador">
 
-<div class="card animate-in delay-2"><div class="card-title"><span class="step">2</span> Ação</div><label style="margin-bottom:12px;font-size:12px;">O que está sendo feito?</label>
+<div class="card animate-in delay-2"><div class="card-title"><span class="step">1</span> Ação</div><label style="margin-bottom:12px;font-size:12px;">O que está sendo feito?</label>
 <div class="action-toggle">
   <button type="button" class="action-btn" data-action="Retirada (Vazio)" onclick="selectAction(this)"><span class="emoji">🔴</span>Retirar Vazio</button>
   <button type="button" class="action-btn" data-action="Inserção (Cheio)" onclick="selectAction(this)"><span class="emoji">🟢</span>Inserir Cheio</button>
 </div></div>
 
-<div class="card animate-in delay-3"><div class="card-title"><span class="step">3</span> Localização</div><label style="margin-bottom:12px;font-size:12px;">Ponto de instalação ou retirada:</label>
+<div class="card animate-in delay-3"><div class="card-title"><span class="step">2</span> Localização</div><label style="margin-bottom:12px;font-size:12px;">Ponto de instalação ou retirada:</label>
 <div class="loc-grid">
   <button type="button" class="loc-btn" data-loc="Armário Externo" onclick="selectLocation(this)"><span class="loc-icon">🚪</span>Armário Externo</button>
   <button type="button" class="loc-btn" data-loc="Sala 8" onclick="selectLocation(this)"><span class="loc-icon">🏥</span>Sala 8</button>
@@ -377,7 +385,7 @@ Ativar Minha Conta
 <div class="field" id="outraField" style="display:none;margin-top:12px;"><input type="text" id="outraLoc" placeholder="Informe a localização"></div>
 </div>
 
-<div class="card" style="border-left:4px solid var(--terra);"><div class="card-title"><span class="step" style="background:linear-gradient(135deg,var(--terra),#D4765E);">4</span> Checklist de Segurança <span style="font-weight:300;text-transform:none;letter-spacing:0;color:var(--terra);">(obrigatório)</span></div>
+<div class="card" style="border-left:4px solid var(--terra);"><div class="card-title"><span class="step" style="background:linear-gradient(135deg,var(--terra),#D4765E);">3</span> Checklist de Segurança <span style="font-weight:300;text-transform:none;letter-spacing:0;color:var(--terra);">(obrigatório)</span></div>
 <label style="margin-bottom:12px;font-size:12px;">Confirme todos os itens:</label>
 <div class="valve-list" id="safetyChecklist">
   <div class="valve-item" data-check="Válvula de saída fechada" onclick="toggleSafety(this)"><div class="valve-check">✓</div><div class="valve-info"><div class="valve-name" style="font-size:13px;">Válvula de saída fechada</div><div class="valve-loc">Antes de iniciar a troca</div></div></div>
@@ -388,7 +396,7 @@ Ativar Minha Conta
 <div style="margin-top:12px;padding:10px 12px;background:var(--terra-bg);border-radius:8px;font-size:11px;color:var(--terra);border:1px solid rgba(184,92,74,.15);">⚠️ Todos os itens devem ser marcados.</div>
 </div>
 
-<div class="card"><div class="card-title"><span class="step">5</span> Foto do Manômetro <span style="font-weight:300;text-transform:none;letter-spacing:0;color:var(--grafite-light);">(recomendado)</span></div>
+<div class="card"><div class="card-title"><span class="step">4</span> Foto do Manômetro <span style="font-weight:300;text-transform:none;letter-spacing:0;color:var(--grafite-light);">(recomendado)</span></div>
 <div class="photo-area" id="photoArea" onclick="document.getElementById('photoInput').click()">
   <div class="cam-icon">📸</div>
   <p>Toque para fotografar o manômetro</p>
@@ -398,7 +406,7 @@ Ativar Minha Conta
 <div class="photo-actions" id="photoActions"><button onclick="clearPhoto()">Remover foto</button></div>
 </div>
 
-<div class="card"><div class="card-title"><span class="step">6</span> Assinatura do Operador <span style="font-weight:300;text-transform:none;letter-spacing:0;color:var(--grafite-light);">(obrigatório)</span></div>
+<div class="card"><div class="card-title"><span class="step">5</span> Assinatura do Operador <span style="font-weight:300;text-transform:none;letter-spacing:0;color:var(--grafite-light);">(obrigatório)</span></div>
 <div class="sig-container" id="sigContainer">
   <canvas id="sigCanvas" width="600" height="200"></canvas>
   <div class="sig-placeholder" id="sigPlaceholder">✍️ Assine com o dedo aqui</div>
@@ -406,7 +414,7 @@ Ativar Minha Conta
 <div class="sig-actions"><button onclick="clearSig()">Limpar</button></div>
 </div>
 
-<div class="card"><div class="card-title"><span class="step">7</span> Observação <span style="font-weight:300;text-transform:none;letter-spacing:0;color:var(--grafite-light);">(opcional)</span></div><div class="field"><input type="text" id="moveObs" placeholder="Ex: cilindro com avaria"></div></div>
+<div class="card"><div class="card-title"><span class="step">6</span> Observação <span style="font-weight:300;text-transform:none;letter-spacing:0;color:var(--grafite-light);">(opcional)</span></div><div class="field"><input type="text" id="moveObs" placeholder="Ex: cilindro com avaria"></div></div>
 
 <button class="submit-btn" id="moveSubmitBtn" onclick="confirmMove()" disabled><span class="spinner" id="moveSpinner"></span><span id="moveSubmitText">Registrar Movimentação</span></button>
 <div class="error-msg" id="moveErrorMsg"></div>
@@ -733,10 +741,11 @@ function startValve(mode){
   if(mode==='abertura'){h.className='valve-header opening animate-in';document.getElementById('valveIcon').textContent='🔓';document.getElementById('valveTitle').textContent='Abertura de Válvulas';document.getElementById('valveSubtitle').textContent='Marque cada válvula após abertura';document.getElementById('valveSubmitText').textContent='Registrar Abertura';btn.className='submit-btn opening-btn';}
   else{h.className='valve-header closing animate-in';document.getElementById('valveIcon').textContent='🔒';document.getElementById('valveTitle').textContent='Fechamento de Válvulas';document.getElementById('valveSubtitle').textContent='Marque cada válvula após fechamento';document.getElementById('valveSubmitText').textContent='Registrar Fechamento';btn.className='submit-btn closing-btn';}
   document.getElementById('valveOperador').value=currentSession.nome;
+  document.getElementById('valveUserBadge').textContent=currentSession.nome;
   showScreen('valve');
 }
 function toggleValve(el){el.classList.toggle('checked');checkValveReady();}
-function checkValveReady(){document.getElementById('valveSubmitBtn').disabled=!(document.getElementById('valveOperador').value.trim()&&document.querySelectorAll('#valveList .valve-item.checked').length>0);}
+function checkValveReady(){document.getElementById('valveSubmitBtn').disabled=!(document.querySelectorAll('#valveList .valve-item.checked').length>0);}
 
 function confirmValve(){
   const op=document.getElementById('valveOperador').value.trim(),checked=Array.from(document.querySelectorAll('#valveList .valve-item.checked')).map(e=>e.dataset.valve),obs=document.getElementById('valveObs').value.trim();
@@ -824,6 +833,7 @@ function setupMoveForm(){
   document.getElementById('cylId').textContent=currentCylinder.id;
   document.getElementById('cylCap').textContent='Capacidade: '+currentCylinder.capacidade;
   document.getElementById('moveOperador').value=currentSession.nome;
+  document.getElementById('moveUserBadge').textContent=currentSession.nome;
 }
 function selectAction(btn){document.querySelectorAll('.action-btn').forEach(b=>b.classList.remove('selected-out','selected-in'));selectedAction=btn.dataset.action;btn.classList.add(selectedAction.includes('Retirada')?'selected-out':'selected-in');checkMoveReady();}
 function selectLocation(btn){document.querySelectorAll('.loc-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');if(btn.dataset.loc==='Outra'){document.getElementById('outraField').style.display='block';selectedLocation=null;}else{document.getElementById('outraField').style.display='none';document.getElementById('outraLoc').value='';selectedLocation=btn.dataset.loc;}checkMoveReady();}
@@ -831,10 +841,10 @@ function getLocation(){return selectedLocation||document.getElementById('outraLo
 function toggleSafety(el){el.classList.toggle('checked');checkMoveReady();}
 
 function checkMoveReady(){
-  const n=document.getElementById('moveOperador').value.trim(),a=selectedAction,l=getLocation();
+  const a=selectedAction,l=getLocation();
   const ct=document.querySelectorAll('#safetyChecklist .valve-item').length;
   const cd=document.querySelectorAll('#safetyChecklist .valve-item.checked').length;
-  document.getElementById('moveSubmitBtn').disabled=!(n&&a&&l&&cd===ct&&sigHasData);
+  document.getElementById('moveSubmitBtn').disabled=!(a&&l&&cd===ct&&sigHasData);
 }
 
 document.getElementById('outraLoc').addEventListener('input',checkMoveReady);
