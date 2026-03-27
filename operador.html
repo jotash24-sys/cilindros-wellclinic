@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Well Clinic — Controle de Gases</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -577,13 +580,8 @@ async function handleLogin(){
         perfil:result.user.perfil||'operador'
       };
       localStorage.setItem('wc_session',JSON.stringify(currentSession));
-      // Login fresco: redireciona para portal (exceto se veio por QR)
-      const params=new URLSearchParams(window.location.search);
-      if(params.get('cid')){
-        showApp();
-      }else{
-        window.location.href='https://jotash24-sys.github.io/wellclinic-portal/';
-      }
+      // Login OK: mostrar o app direto (link pro portal fica no header)
+      showApp();
     }else{
       err.textContent=result.msg||'Email ou PIN incorretos.';
       err.classList.add('show');
@@ -601,19 +599,31 @@ async function validateSession(){
   const sess=localStorage.getItem('wc_session');
   if(!sess)return false;
 
+  let parsed;
+  try{ parsed=JSON.parse(sess); }catch(e){
+    localStorage.removeItem('wc_session');
+    return false;
+  }
+
   try{
-    const parsed=JSON.parse(sess);
     const result=await apiCall({tipo_registro:'validar_sessao',session_token:parsed.token});
     if(result.status==='ok'&&result.user){
       currentSession=parsed;
       return true;
     }
+    // API respondeu, mas sessão inválida — limpar
+    localStorage.removeItem('wc_session');
+    return false;
   }catch(e){
-    console.error('Session validation failed:',e);
+    console.error('Session validation failed (rede):',e);
+    // Falha de rede — confiar na sessão local se tem dados mínimos
+    if(parsed.token&&parsed.nome){
+      currentSession=parsed;
+      return true;
+    }
+    localStorage.removeItem('wc_session');
+    return false;
   }
-
-  localStorage.removeItem('wc_session');
-  return false;
 }
 
 function handleLogout(){
@@ -1074,3 +1084,4 @@ init();
 </script>
 </body>
 </html>
+
