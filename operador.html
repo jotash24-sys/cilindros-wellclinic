@@ -46,6 +46,38 @@ body{font-family:'Poppins',sans-serif;background:var(--marfim);color:var(--grafi
 .login-spinner{width:18px;height:18px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none}
 .login-spinner.show{display:block}
 
+/* DAILY CHECKLIST */
+.daily-checklist{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow-md);border:1px solid var(--border);padding:16px;margin-bottom:14px;animation:fadeUp .5s ease-out both}
+.checklist-header{display:flex;align-items:center;gap:8px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.checklist-icon{font-size:18px}
+.checklist-title{font-family:'Lora',serif;font-size:15px;font-weight:600;color:var(--azul);flex:1}
+.checklist-date{font-size:11px;color:var(--grafite-light)}
+.checklist-row{margin-bottom:12px}
+.checklist-label{font-size:12px;font-weight:600;color:var(--grafite);margin-bottom:6px}
+.checklist-progress{display:flex;align-items:center;gap:10px}
+.checklist-bar{flex:1;height:8px;background:var(--marfim-warm);border-radius:4px;overflow:hidden}
+.checklist-fill{height:100%;border-radius:4px;transition:width .6s ease}
+.checklist-fill.opening{background:linear-gradient(90deg,var(--verde),var(--verde-light))}
+.checklist-fill.closing{background:linear-gradient(90deg,var(--azul),var(--azul-soft))}
+.checklist-count{font-size:12px;font-weight:600;color:var(--grafite);min-width:32px;text-align:right}
+.checklist-detail{font-size:11px;color:var(--grafite-light);margin-top:4px;line-height:1.6}
+.checklist-detail .done{color:var(--verde)}
+.checklist-detail .pending{color:var(--terra)}
+
+/* RANKING */
+.ranking-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow-md);border:1px solid var(--border);padding:16px;margin-bottom:14px;animation:fadeUp .5s ease-out both;animation-delay:.1s}
+.ranking-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.ranking-icon{font-size:18px}
+.ranking-title{font-family:'Lora',serif;font-size:14px;font-weight:600;color:var(--azul)}
+.ranking-list{display:flex;flex-direction:column;gap:8px}
+.ranking-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--marfim);border-radius:var(--radius-sm)}
+.ranking-pos{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:14px;font-weight:700;flex-shrink:0}
+.ranking-pos.gold{background:linear-gradient(135deg,#FFD700,#FFA500);color:#fff}
+.ranking-pos.silver{background:linear-gradient(135deg,#C0C0C0,#A0A0A0);color:#fff}
+.ranking-pos.bronze{background:linear-gradient(135deg,#CD7F32,#B8690E);color:#fff}
+.ranking-name{flex:1;font-size:13px;font-weight:500;color:var(--grafite)}
+.ranking-score{font-size:12px;font-weight:600;color:var(--dourado)}
+
 /* USER BADGE (auto-fill from login) */
 .user-badge{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:12px;box-shadow:var(--shadow-sm)}
 .user-badge-icon{font-size:18px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--dourado-glow);border-radius:50%;flex-shrink:0}
@@ -304,6 +336,28 @@ Ativar Minha Conta
 <!-- ═══ HOME ═══ -->
 <div class="screen active" id="screenHome">
 <div class="home-greeting"><h2>O que deseja registrar?</h2><p>Selecione a operação abaixo</p></div>
+
+<!-- CHECKLIST DIÁRIO -->
+<div class="daily-checklist" id="dailyChecklist" style="display:none;">
+<div class="checklist-header"><span class="checklist-icon">📊</span><span class="checklist-title">Checklist do Dia</span><span class="checklist-date" id="checklistDate"></span></div>
+<div class="checklist-row" id="checklistAbertura">
+  <div class="checklist-label">🔓 Abertura</div>
+  <div class="checklist-progress"><div class="checklist-bar"><div class="checklist-fill opening" id="aberturaBar" style="width:0%"></div></div><span class="checklist-count" id="aberturaCount">0/5</span></div>
+  <div class="checklist-detail" id="aberturaDetail"></div>
+</div>
+<div class="checklist-row" id="checklistFechamento">
+  <div class="checklist-label">🔒 Fechamento</div>
+  <div class="checklist-progress"><div class="checklist-bar"><div class="checklist-fill closing" id="fechamentoBar" style="width:0%"></div></div><span class="checklist-count" id="fechamentoCount">0/5</span></div>
+  <div class="checklist-detail" id="fechamentoDetail"></div>
+</div>
+</div>
+
+<!-- RANKING TOP 3 -->
+<div class="ranking-card" id="rankingCard" style="display:none;">
+<div class="ranking-header"><span class="ranking-icon">🏆</span><span class="ranking-title">Top Contribuidores (30 dias)</span></div>
+<div class="ranking-list" id="rankingList"></div>
+</div>
+
 <div class="home-menu">
   <div class="menu-btn menu-open animate-in delay-1" onclick="startValve('abertura')"><div class="menu-stripe"></div><div class="menu-content"><div class="menu-icon">🔓</div><div class="menu-text"><h3>Abertura de Válvulas</h3><p>Registre a abertura no início do expediente. Obrigatório para rastreabilidade.</p></div></div><div class="menu-arrow">›</div></div>
   <div class="menu-btn menu-close animate-in delay-2" onclick="startValve('fechamento')"><div class="menu-stripe"></div><div class="menu-content"><div class="menu-icon">🔒</div><div class="menu-text"><h3>Fechamento de Válvulas</h3><p>Registre o fechamento ao final do dia. Garante a segurança dos cilindros.</p></div></div><div class="menu-arrow">›</div></div>
@@ -640,6 +694,8 @@ function showApp(){
   document.getElementById('headerUser').textContent=`Olá, ${currentSession.nome}`;
   updateUIForRole();
   showScreen('home');
+  loadDailyChecklist();
+  loadRanking();
 }
 
 function updateUIForRole(){
@@ -967,6 +1023,52 @@ function handlePhoto(input){
   reader.readAsDataURL(file);
 }
 function clearPhoto(){photoBase64=null;document.getElementById('photoPreview').style.display='none';document.getElementById('photoActions').style.display='none';document.getElementById('photoArea').style.display='';document.getElementById('photoInput').value='';}
+
+// ── DAILY CHECKLIST & RANKING ──
+async function loadDailyChecklist(){
+  try{
+    const resp=await fetch(APPS_SCRIPT_URL+'?action=checklist_hoje');
+    const data=await resp.json();
+    const el=document.getElementById('dailyChecklist');
+    el.style.display='';
+    document.getElementById('checklistDate').textContent=data.data||'';
+
+    // Abertura
+    const aC=data.abertura.completas.length,aT=data.abertura.total;
+    document.getElementById('aberturaBar').style.width=(aT>0?Math.round(aC/aT*100):0)+'%';
+    document.getElementById('aberturaCount').textContent=aC+'/'+aT;
+    let aDetail='';
+    data.abertura.completas.forEach(function(c){aDetail+='<span class="done">✓ '+c.valvula+' ('+c.responsavel+' '+c.hora+')</span><br>';});
+    data.abertura.pendentes.forEach(function(v){aDetail+='<span class="pending">○ '+v+'</span><br>';});
+    document.getElementById('aberturaDetail').innerHTML=aDetail;
+
+    // Fechamento
+    const fC=data.fechamento.completas.length,fT=data.fechamento.total;
+    document.getElementById('fechamentoBar').style.width=(fT>0?Math.round(fC/fT*100):0)+'%';
+    document.getElementById('fechamentoCount').textContent=fC+'/'+fT;
+    let fDetail='';
+    data.fechamento.completas.forEach(function(c){fDetail+='<span class="done">✓ '+c.valvula+' ('+c.responsavel+' '+c.hora+')</span><br>';});
+    data.fechamento.pendentes.forEach(function(v){fDetail+='<span class="pending">○ '+v+'</span><br>';});
+    document.getElementById('fechamentoDetail').innerHTML=fDetail;
+  }catch(e){console.error('Checklist load error:',e);}
+}
+
+async function loadRanking(){
+  try{
+    const resp=await fetch(APPS_SCRIPT_URL+'?action=ranking');
+    const data=await resp.json();
+    if(!data||data.length===0)return;
+    const el=document.getElementById('rankingCard');
+    el.style.display='';
+    const medals=['gold','silver','bronze'];
+    const emojis=['🥇','🥈','🥉'];
+    let html='';
+    data.forEach(function(item,i){
+      html+='<div class="ranking-item"><div class="ranking-pos '+medals[i]+'">'+emojis[i]+'</div><div class="ranking-name">'+item.nome+'</div><div class="ranking-score">'+item.registros+' registros</div></div>';
+    });
+    document.getElementById('rankingList').innerHTML=html;
+  }catch(e){console.error('Ranking load error:',e);}
+}
 
 init();
 </script>
