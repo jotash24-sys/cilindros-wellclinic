@@ -515,7 +515,13 @@ async function handleLogin(){
         perfil:result.user.perfil||'operador'
       };
       localStorage.setItem('wc_session',JSON.stringify(currentSession));
-      showApp();
+      // Login fresco: redireciona para portal (exceto se veio por QR)
+      const params=new URLSearchParams(window.location.search);
+      if(params.get('cid')){
+        showApp();
+      }else{
+        window.location.href='https://jotash24-sys.github.io/wellclinic-portal/';
+      }
     }else{
       err.textContent=result.msg||'Email ou PIN incorretos.';
       err.classList.add('show');
@@ -620,17 +626,11 @@ function goToLogin(){
   document.getElementById('loginOverlay').classList.add('show');
 }
 
-function showApp(skipRedirect){
+function showApp(){
   document.getElementById('loginOverlay').classList.remove('show');
   document.getElementById('logoutBtn').classList.remove('hide');
   document.getElementById('headerUser').textContent=`Olá, ${currentSession.nome}`;
   updateUIForRole();
-  // Se não veio por QR code (?cid=), redirecionar para o portal
-  const params=new URLSearchParams(window.location.search);
-  if(!skipRedirect && !params.get('cid')){
-    window.location.href='https://jotash24-sys.github.io/wellclinic-portal/';
-    return;
-  }
   showScreen('home');
 }
 
@@ -682,11 +682,11 @@ async function init(){
     if(cid&&CILINDROS[cid]){
       currentCylinder=CILINDROS[cid];
       initSignature();
-      showApp(true);
+      showApp();
       showScreen('move');
       setupMoveForm();
     }else{
-      showApp(); // vai redirecionar para portal se não tem ?cid=
+      showApp(); // sessão válida, mostrar o sistema de gases
     }
     return;
   }else{
