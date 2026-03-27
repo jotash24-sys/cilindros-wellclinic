@@ -68,7 +68,7 @@ const API='https://script.google.com/macros/s/AKfycbyJqDDH8h5gaybLSk1v11-JOYL-FM
 
 // Verificar se o usuário é gestor
 async function checkAccess(){
-  const sess=sessionStorage.getItem('wc_session');
+  const sess=localStorage.getItem('wc_session');
   if(!sess){window.location.href='operador.html';return false;}
   try{
     const parsed=JSON.parse(sess);
