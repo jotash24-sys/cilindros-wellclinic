@@ -287,7 +287,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 <label style="margin-bottom:12px;font-size:12px;">Adicione cada tipo de gás da nota:</label>
 <div id="nfItens">
   <div class="nf-item-row" data-idx="0">
-    <select id="nfGas0"><option value="">Tipo de gás</option><option value="Óxido Nitroso">Óxido Nitroso</option><option value="Oxigênio">Oxigênio</option></select>
+    <select id="nfGas0"><option value="">Tipo de gás</option><option value="Óxido Nitroso — 33kg">Óxido Nitroso — 33kg</option><option value="Óxido Nitroso — 7kg">Óxido Nitroso — 7kg</option><option value="Oxigênio — 10m³">Oxigênio — 10m³</option><option value="Oxigênio — 1,5m³">Oxigênio — 1,5m³</option></select>
     <input type="number" id="nfQtd0" placeholder="Qtd" min="0">
     <input type="number" id="nfValor0" placeholder="R$ Total" min="0" step="0.01">
   </div>
@@ -357,7 +357,7 @@ function goHome(){
   document.getElementById('photoPreview').style.display='none';
   document.getElementById('photoActions').style.display='none';
   document.getElementById('photoArea').style.display='';
-  document.getElementById('nfItens').innerHTML='<div class="nf-item-row" data-idx="0"><select id="nfGas0"><option value="">Tipo de gás</option><option value="Óxido Nitroso">Óxido Nitroso</option><option value="Oxigênio">Oxigênio</option></select><input type="number" id="nfQtd0" placeholder="Qtd" min="0"><input type="number" id="nfValor0" placeholder="R$ Total" min="0" step="0.01"></div>';
+  document.getElementById('nfItens').innerHTML='<div class="nf-item-row" data-idx="0"><select id="nfGas0"><option value="">Tipo de gás</option><option value="Óxido Nitroso — 33kg">Óxido Nitroso — 33kg</option><option value="Óxido Nitroso — 7kg">Óxido Nitroso — 7kg</option><option value="Oxigênio — 10m³">Oxigênio — 10m³</option><option value="Oxigênio — 1,5m³">Oxigênio — 1,5m³</option></select><input type="number" id="nfQtd0" placeholder="Qtd" min="0"><input type="number" id="nfValor0" placeholder="R$ Total" min="0" step="0.01"></div>';
   clearSig();
   window.history.replaceState({},'',window.location.pathname);
   showScreen('home');
@@ -434,7 +434,7 @@ function confirmMove(){
 function addNfItem(){
   const idx=nfItemCount++;
   const row=document.createElement('div');row.className='nf-item-row';row.dataset.idx=idx;
-  row.innerHTML=`<select id="nfGas${idx}"><option value="">Tipo de gás</option><option value="Óxido Nitroso">Óxido Nitroso</option><option value="Oxigênio">Oxigênio</option></select><input type="number" id="nfQtd${idx}" placeholder="Qtd" min="0"><input type="number" id="nfValor${idx}" placeholder="R$ Total" min="0" step="0.01">`;
+  row.innerHTML=`<select id="nfGas${idx}"><option value="">Tipo de gás</option><option value="Óxido Nitroso — 33kg">Óxido Nitroso — 33kg</option><option value="Óxido Nitroso — 7kg">Óxido Nitroso — 7kg</option><option value="Oxigênio — 10m³">Oxigênio — 10m³</option><option value="Oxigênio — 1,5m³">Oxigênio — 1,5m³</option></select><input type="number" id="nfQtd${idx}" placeholder="Qtd" min="0"><input type="number" id="nfValor${idx}" placeholder="R$ Total" min="0" step="0.01">`;
   document.getElementById('nfItens').appendChild(row);
 }
 
