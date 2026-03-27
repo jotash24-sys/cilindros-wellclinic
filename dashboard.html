@@ -65,7 +65,29 @@
 
 <script>
 const API='https://script.google.com/macros/s/AKfycbyJqDDH8h5gaybLSk1v11-JOYL-FMvHot1BI9fq1mo5JBMWGyY4E6pG3J7ydN9SWMDUiA/exec';
-async function load(){try{const r=await fetch(API+'?action=dashboard');render(await r.json());}catch(e){document.getElementById('dc').innerHTML=`<div class="er"><h3>Erro ao carregar</h3><p>Verifique se o Apps Script foi atualizado e reimplantado.<br>${e.message}</p></div>`;}}
+
+// Verificar se o usuário é gestor
+async function checkAccess(){
+  const sess=sessionStorage.getItem('wc_session');
+  if(!sess){window.location.href='operador.html';return false;}
+  try{
+    const parsed=JSON.parse(sess);
+    if(parsed.perfil!=='gestor'){
+      document.getElementById('dc').innerHTML='<div class="er"><h3>Acesso Restrito</h3><p>O dashboard é exclusivo para gestores.<br><a href="operador.html" style="color:#4A9E8E;">Voltar ao sistema</a></p></div>';
+      return false;
+    }
+    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({tipo_registro:'validar_sessao',session_token:parsed.token})});
+    const result=await r.json();
+    if(result.status!=='ok'){sessionStorage.removeItem('wc_session');window.location.href='operador.html';return false;}
+    return true;
+  }catch(e){window.location.href='operador.html';return false;}
+}
+
+async function load(){
+  const ok=await checkAccess();
+  if(!ok)return;
+  try{const r=await fetch(API+'?action=dashboard');render(await r.json());}catch(e){document.getElementById('dc').innerHTML=`<div class="er"><h3>Erro ao carregar</h3><p>Verifique se o Apps Script foi atualizado e reimplantado.<br>${e.message}</p></div>`;}
+}
 
 function render(D){
 document.getElementById('updAt').textContent='Atualizado: '+D.geradoEm;
