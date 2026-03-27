@@ -6,6 +6,7 @@
 <title>Well Clinic — Controle de Gases</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
 <style>
 :root{--azul:#0F1F3A;--azul-soft:#1A2E52;--azul-glow:#243B66;--dourado:#A0896C;--dourado-light:#C4AD8F;--dourado-glow:rgba(160,137,108,.15);--verde:#4A9E8E;--verde-light:#5CB8A6;--verde-bg:rgba(74,158,142,.08);--marfim:#FAF7F2;--marfim-warm:#F5F0E8;--grafite:#2D2D3A;--grafite-light:#5A5A6E;--terra:#B85C4A;--terra-bg:rgba(184,92,74,.08);--card:#FFF;--border:rgba(160,137,108,.2);--shadow-sm:0 2px 8px rgba(15,31,58,.06);--shadow-md:0 4px 20px rgba(15,31,58,.08);--shadow-lg:0 8px 40px rgba(15,31,58,.12);--shadow-gold:0 4px 20px rgba(160,137,108,.15);--radius:16px;--radius-sm:12px}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -326,10 +327,29 @@ Ativar Minha Conta
 
 <!-- ═══ SCAN ═══ -->
 <div class="screen" id="screenScan">
-<div style="background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow-md);border:1px solid var(--border);padding:48px 24px;text-align:center;" class="animate-in">
-<div style="width:80px;height:80px;background:var(--marfim-warm);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 20px;animation:pulse-ring 2s ease-in-out infinite;">📷</div>
-<h2 style="font-family:'Lora',serif;font-size:20px;font-weight:600;color:var(--azul);margin-bottom:10px;">Escaneie o QR Code</h2>
-<p style="font-size:14px;color:var(--grafite-light);line-height:1.7;">Aponte a câmera para o QR Code<br>fixado no cilindro.<br><br>Identificação automática,<br>sem margem de erro.</p>
+<div style="background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow-md);border:1px solid var(--border);padding:24px;text-align:center;" class="animate-in">
+<h2 style="font-family:'Lora',serif;font-size:20px;font-weight:600;color:var(--azul);margin-bottom:6px;">📷 Escaneie o QR Code</h2>
+<p style="font-size:13px;color:var(--grafite-light);margin-bottom:16px;">Aponte a câmera para o QR Code fixado no cilindro</p>
+<div id="qrReader" style="width:100%;border-radius:12px;overflow:hidden;"></div>
+<p id="qrStatus" style="font-size:12px;color:var(--grafite-light);margin-top:12px;">Aguardando câmera...</p>
+<div id="qrManual" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+<p style="font-size:12px;color:var(--grafite-light);margin-bottom:10px;">Ou selecione manualmente:</p>
+<select id="manualCylinder" style="width:100%;padding:12px;border-radius:var(--radius-sm);border:1px solid var(--border);font-family:'Poppins',sans-serif;font-size:14px;background:var(--marfim);color:var(--grafite);" onchange="manualSelectCylinder(this.value)">
+<option value="">Escolha o cilindro...</option>
+<option value="nitroso1">Nitroso 1 — Óxido Nitroso 33kg</option>
+<option value="nitroso2">Nitroso 2 — Óxido Nitroso 33kg</option>
+<option value="nitroso3">Nitroso 3 — Óxido Nitroso 33kg</option>
+<option value="nitroso4">Nitroso 4 — Óxido Nitroso 7kg</option>
+<option value="oxigenio1">Oxigênio 1 — 10m³</option>
+<option value="oxigenio2">Oxigênio 2 — 10m³</option>
+<option value="oxigenio3">Oxigênio 3 — 10m³</option>
+<option value="oxigenio4">Oxigênio 4 — 10m³</option>
+<option value="oxigenio5">Oxigênio 5 — 10m³</option>
+<option value="oxigenio6">Oxigênio 6 — 1,5m³</option>
+<option value="oxigenio7">Oxigênio 7 — 1,5m³</option>
+<option value="oxigenio8">Oxigênio 8 — 1,5m³</option>
+</select>
+</div>
 </div>
 <div class="footer"><div class="footer-divider"></div><div class="footer-brand">Well Clinic</div><div class="footer-dev">Desenvolvido por Jonatã Schneider</div></div>
 </div>
@@ -494,7 +514,7 @@ async function handleLogin(){
         nome:result.user.nome||'Usuário',
         perfil:result.user.perfil||'operador'
       };
-      sessionStorage.setItem('wc_session',JSON.stringify(currentSession));
+      localStorage.setItem('wc_session',JSON.stringify(currentSession));
       showApp();
     }else{
       err.textContent=result.msg||'Email ou PIN incorretos.';
@@ -510,7 +530,7 @@ async function handleLogin(){
 }
 
 async function validateSession(){
-  const sess=sessionStorage.getItem('wc_session');
+  const sess=localStorage.getItem('wc_session');
   if(!sess)return false;
 
   try{
@@ -524,12 +544,12 @@ async function validateSession(){
     console.error('Session validation failed:',e);
   }
 
-  sessionStorage.removeItem('wc_session');
+  localStorage.removeItem('wc_session');
   return false;
 }
 
 function handleLogout(){
-  sessionStorage.removeItem('wc_session');
+  localStorage.removeItem('wc_session');
   currentSession=null;
   document.getElementById('loginEmail').value='';
   document.getElementById('loginPin').value='';
@@ -600,11 +620,17 @@ function goToLogin(){
   document.getElementById('loginOverlay').classList.add('show');
 }
 
-function showApp(){
+function showApp(skipRedirect){
   document.getElementById('loginOverlay').classList.remove('show');
   document.getElementById('logoutBtn').classList.remove('hide');
   document.getElementById('headerUser').textContent=`Olá, ${currentSession.nome}`;
   updateUIForRole();
+  // Se não veio por QR code (?cid=), redirecionar para o portal
+  const params=new URLSearchParams(window.location.search);
+  if(!skipRedirect && !params.get('cid')){
+    window.location.href='https://jotash24-sys.github.io/wellclinic-portal/';
+    return;
+  }
   showScreen('home');
 }
 
@@ -650,18 +676,21 @@ async function init(){
     return;
   }
 
+  const cid=params.get('cid');
   const isValid=await validateSession();
   if(isValid){
-    showApp();
+    if(cid&&CILINDROS[cid]){
+      currentCylinder=CILINDROS[cid];
+      initSignature();
+      showApp(true);
+      showScreen('move');
+      setupMoveForm();
+    }else{
+      showApp(); // vai redirecionar para portal se não tem ?cid=
+    }
+    return;
   }else{
     document.getElementById('loginOverlay').classList.add('show');
-  }
-
-  const cid=params.get('cid');
-  if(cid&&CILINDROS[cid]&&currentSession){
-    currentCylinder=CILINDROS[cid];
-    showScreen('move');
-    setupMoveForm();
   }
 
   initSignature();
@@ -677,6 +706,7 @@ function showScreen(n){
 }
 
 function goHome(){
+  stopQrScanner();
   selectedAction=null;selectedLocation=null;currentValveMode=null;currentCylinder=null;photoBase64=null;sigHasData=false;nfItemCount=1;
   document.querySelectorAll('.action-btn').forEach(b=>b.classList.remove('selected-out','selected-in'));
   document.querySelectorAll('.loc-btn').forEach(b=>b.classList.remove('selected'));
@@ -720,7 +750,73 @@ function confirmValve(){
 }
 
 // ── MOVEMENT ──
-function startMove(){showScreen('scan');}
+let qrScanner=null;
+
+function startMove(){
+  showScreen('scan');
+  startQrScanner();
+}
+
+function startQrScanner(){
+  if(qrScanner)try{qrScanner.stop();}catch(e){}
+  document.getElementById('qrStatus').textContent='Iniciando câmera...';
+  document.getElementById('manualCylinder').value='';
+  qrScanner=new Html5Qrcode('qrReader');
+  qrScanner.start(
+    {facingMode:'environment'},
+    {fps:10,qrbox:{width:250,height:250}},
+    function(decodedText){
+      handleQrResult(decodedText);
+    },
+    function(){}
+  ).then(function(){
+    document.getElementById('qrStatus').textContent='Câmera ativa — aponte para o QR Code';
+  }).catch(function(err){
+    document.getElementById('qrStatus').textContent='Câmera indisponível — use a seleção manual abaixo';
+    console.error('QR Scanner error:',err);
+  });
+}
+
+function stopQrScanner(){
+  if(qrScanner)try{qrScanner.stop();}catch(e){}
+}
+
+function handleQrResult(text){
+  stopQrScanner();
+  // O QR Code pode conter a URL completa ou só o cid
+  let cid=null;
+  try{
+    const url=new URL(text);
+    cid=url.searchParams.get('cid');
+  }catch(e){
+    // Não é URL, tentar como cid direto
+    cid=text.trim().toLowerCase();
+  }
+  if(cid&&CILINDROS[cid]){
+    currentCylinder=CILINDROS[cid];
+    showScreen('move');
+    setupMoveForm();
+    initSignature();
+  }else{
+    document.getElementById('qrStatus').textContent='QR Code não reconhecido. Tente novamente.';
+    document.getElementById('qrStatus').style.color='var(--terra)';
+    setTimeout(function(){
+      document.getElementById('qrStatus').style.color='';
+      startQrScanner();
+    },2000);
+  }
+}
+
+function manualSelectCylinder(cid){
+  if(!cid)return;
+  stopQrScanner();
+  if(CILINDROS[cid]){
+    currentCylinder=CILINDROS[cid];
+    showScreen('move');
+    setupMoveForm();
+    initSignature();
+  }
+}
 function setupMoveForm(){
   const n=currentCylinder.tipo==='Óxido Nitroso';
   document.getElementById('cylBanner').className='cyl-banner animate-in '+(n?'n2o':'o2');
