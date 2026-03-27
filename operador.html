@@ -14,7 +14,66 @@ body{font-family:'Poppins',sans-serif;background:var(--marfim);color:var(--grafi
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes checkPop{0%{transform:scale(0)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
 @keyframes pulse-ring{0%,100%{transform:scale(.95);opacity:.5}50%{transform:scale(1);opacity:1}}
+@keyframes pulse-dot{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.1);opacity:1}}
 .animate-in{animation:fadeUp .5s ease-out both}.delay-1{animation-delay:.1s}.delay-2{animation-delay:.2s}.delay-3{animation-delay:.3s}.delay-4{animation-delay:.4s}
+
+/* LOGIN OVERLAY */
+.login-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,var(--azul),var(--azul-soft));display:flex;flex-direction:column;z-index:1000;opacity:0;pointer-events:none;transition:opacity .3s}
+.login-overlay.show{opacity:1;pointer-events:auto}
+.login-header{background:linear-gradient(135deg,var(--azul),var(--azul-soft));color:#fff;text-align:center;padding:40px 20px 30px;position:relative;overflow:hidden}
+.login-header::before{content:'';position:absolute;top:-50%;right:-20%;width:200px;height:200px;background:radial-gradient(circle,rgba(160,137,108,.1),transparent 70%);border-radius:50%}
+.login-header-logo{font-family:'Lora',serif;font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--dourado-light);margin-bottom:4px}
+.login-header h1{font-family:'Lora',serif;font-size:18px;font-weight:600;letter-spacing:.5px}
+.login-header-divider{width:32px;height:2px;background:linear-gradient(90deg,transparent,var(--dourado),transparent);margin:8px auto 4px}
+.login-body{flex:1;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow-lg);padding:36px 24px;width:100%;max-width:360px;animation:fadeUp .5s ease-out}
+.login-card h2{font-family:'Lora',serif;font-size:20px;font-weight:600;color:var(--azul);margin-bottom:6px;text-align:center}
+.login-card p{font-size:13px;color:var(--grafite-light);text-align:center;margin-bottom:28px}
+.login-field{margin-bottom:18px}
+.login-field label{display:block;font-size:12px;font-weight:500;color:var(--grafite-light);margin-bottom:8px;letter-spacing:.3px}
+.login-field input{width:100%;padding:15px 14px;font-family:'Poppins',sans-serif;font-size:15px;border:2px solid var(--border);border-radius:var(--radius-sm);background:var(--marfim);color:var(--grafite);transition:all .3s}
+.login-field input::placeholder{color:rgba(45,45,58,.3)}
+.login-field input:focus{outline:none;border-color:var(--dourado);background:#fff;box-shadow:var(--shadow-gold)}
+.login-pin-display{display:flex;justify-content:center;gap:12px;margin:20px 0 28px}
+.pin-dot{width:16px;height:16px;border-radius:50%;background:var(--marfim);border:2px solid var(--dourado);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--dourado);font-weight:bold;transition:all .2s}
+.pin-dot.filled{background:var(--dourado);color:#fff}
+.login-error{background:var(--terra-bg);color:var(--terra);font-size:12px;padding:12px 14px;border-radius:var(--radius-sm);margin-bottom:18px;display:none;border:1px solid rgba(184,92,74,.2);text-align:center}
+.login-error.show{display:block}
+.login-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--verde),var(--verde-light));color:#fff;font-family:'Poppins',sans-serif;font-size:15px;font-weight:600;border:none;border-radius:var(--radius-sm);cursor:pointer;transition:all .3s;letter-spacing:.5px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:var(--shadow-md)}
+.login-btn:active:not(:disabled){transform:scale(.98)}
+.login-btn:disabled{background:var(--border);color:var(--grafite-light);cursor:not-allowed;box-shadow:none}
+.login-spinner{width:18px;height:18px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none}
+.login-spinner.show{display:block}
+
+/* LOGOUT BTN */
+.header-logout{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.08);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);color:#fff;padding:8px 12px;border-radius:10px;font-size:11px;font-weight:500;cursor:pointer;transition:all .3s;letter-spacing:.3px}
+.header-logout:active{background:rgba(255,255,255,.15);transform:translateY(-50%) scale(.95)}
+.header-logout.hide{display:none}
+
+/* PIN REGISTRATION OVERLAY */
+.registro-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,var(--azul),var(--azul-soft));display:flex;flex-direction:column;z-index:1000;opacity:0;pointer-events:none;transition:opacity .3s}
+.registro-overlay.show{opacity:1;pointer-events:auto}
+.registro-header{background:linear-gradient(135deg,var(--azul),var(--azul-soft));color:#fff;text-align:center;padding:40px 20px 30px;position:relative;overflow:hidden}
+.registro-header::before{content:'';position:absolute;top:-50%;right:-20%;width:200px;height:200px;background:radial-gradient(circle,rgba(160,137,108,.1),transparent 70%);border-radius:50%}
+.registro-header h1{font-family:'Lora',serif;font-size:20px;font-weight:600;color:#fff;margin-bottom:4px}
+.registro-header p{font-size:13px;color:rgba(255,255,255,.7);margin-top:8px}
+.registro-body{flex:1;display:flex;align-items:center;justify-content:center;padding:20px}
+.registro-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow-lg);padding:36px 24px;width:100%;max-width:360px;animation:fadeUp .5s ease-out}
+.registro-field{margin-bottom:24px}
+.registro-field label{display:block;font-size:13px;font-weight:600;color:var(--azul);margin-bottom:12px;letter-spacing:.3px}
+.registro-pin-inputs{display:flex;justify-content:center;gap:16px;margin:16px 0}
+.registro-pin-input{width:60px;height:60px;font-family:'Poppins',sans-serif;font-size:24px;font-weight:600;text-align:center;border:2px solid var(--border);border-radius:var(--radius-sm);background:var(--marfim);color:var(--azul);transition:all .3s;-webkit-appearance:none}
+.registro-pin-input:focus{outline:none;border-color:var(--dourado);background:#fff;box-shadow:var(--shadow-gold)}
+.registro-pin-input::placeholder{color:var(--dourado);font-size:20px}
+.registro-error{background:var(--terra-bg);color:var(--terra);font-size:12px;padding:12px 14px;border-radius:var(--radius-sm);margin-bottom:18px;display:none;border:1px solid rgba(184,92,74,.2);text-align:center}
+.registro-error.show{display:block}
+.registro-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--verde),var(--verde-light));color:#fff;font-family:'Poppins',sans-serif;font-size:15px;font-weight:600;border:none;border-radius:var(--radius-sm);cursor:pointer;transition:all .3s;letter-spacing:.5px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:var(--shadow-md);margin-top:8px}
+.registro-btn:active:not(:disabled){transform:scale(.98)}
+.registro-btn:disabled{background:var(--border);color:var(--grafite-light);cursor:not-allowed;box-shadow:none}
+.registro-success{background:var(--verde-bg);color:var(--verde);font-size:13px;padding:16px;border-radius:var(--radius-sm);text-align:center;margin-bottom:18px;display:none;border:1px solid rgba(74,158,142,.2);line-height:1.6}
+.registro-success.show{display:block}
+.registro-success-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--azul),var(--azul-soft));color:#fff;font-family:'Poppins',sans-serif;font-size:14px;font-weight:600;border:none;border-radius:var(--radius-sm);cursor:pointer;transition:all .3s;display:none;margin-top:8px}
+.registro-success-btn.show{display:block}
 
 /* HEADER */
 .header{background:linear-gradient(135deg,var(--azul),var(--azul-soft));color:#fff;position:sticky;top:0;z-index:100;overflow:hidden}
@@ -24,7 +83,8 @@ body{font-family:'Poppins',sans-serif;background:var(--marfim);color:var(--grafi
 .header h1{font-family:'Lora',serif;font-size:17px;font-weight:600;text-align:center;letter-spacing:.5px}
 .header-divider{width:32px;height:2px;background:linear-gradient(90deg,transparent,var(--dourado),transparent);margin:6px auto 4px}
 .header-sub{font-size:11px;font-weight:300;text-align:center;opacity:.6;letter-spacing:1px}
-.back-btn{position:absolute;left:12px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.08);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);color:#fff;width:40px;height:40px;border-radius:12px;font-size:18px;cursor:pointer;display:none;align-items:center;justify-content:center;transition:all .3s}
+.header-user{font-size:12px;text-align:center;margin-top:8px;opacity:.8}
+.back-btn{position:absolute;left:12px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.08);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);color:#fff;width:40px;height:40px;border-radius:12px;font-size:18px;cursor:pointer;display:none;align-items:center;justify-content:center;transition:all .3s;letter-spacing:.3px}
 .back-btn.show{display:flex}
 .portal-link{position:absolute;left:12px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:6px;color:var(--dourado-light);text-decoration:none;font-size:12px;font-weight:500;padding:8px 14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:10px;transition:all .3s;letter-spacing:.3px}
 .portal-link:active{background:rgba(255,255,255,.15)}
@@ -50,6 +110,7 @@ body{font-family:'Poppins',sans-serif;background:var(--marfim);color:var(--grafi
 .menu-open .menu-icon{background:var(--dourado-glow)}.menu-close .menu-icon{background:rgba(15,31,58,.06)}.menu-move .menu-icon{background:var(--verde-bg)}.menu-nf .menu-icon{background:var(--terra-bg)}
 .menu-text{flex:1}.menu-text h3{font-family:'Lora',serif;font-size:16px;font-weight:600;color:var(--azul);margin-bottom:3px}.menu-text p{font-size:12px;color:var(--grafite-light);line-height:1.4}
 .menu-arrow{color:var(--dourado);font-size:18px;padding-right:16px;display:flex;align-items:center;opacity:.4}
+.menu-nf.hidden{display:none}
 
 /* CARDS */
 .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow-sm);border:1px solid var(--border);padding:22px 18px;margin-bottom:14px}
@@ -62,6 +123,7 @@ label{display:block;font-size:12px;font-weight:500;color:var(--grafite-light);ma
 input,select{width:100%;padding:15px 14px;font-family:'Poppins',sans-serif;font-size:15px;border:2px solid var(--border);border-radius:var(--radius-sm);background:var(--marfim);color:var(--grafite);transition:all .3s;-webkit-appearance:none}
 input::placeholder{color:rgba(45,45,58,.3)}
 input:focus,select:focus{outline:none;border-color:var(--dourado);background:#fff;box-shadow:var(--shadow-gold)}
+input:read-only{background:var(--marfim-warm);color:var(--grafite-light);cursor:not-allowed}
 select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235A5A6E' stroke-width='2' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
 
 /* BANNER */
@@ -158,13 +220,76 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 </head>
 <body>
 
+<!-- LOGIN OVERLAY -->
+<div class="login-overlay show" id="loginOverlay">
+<div class="login-header">
+<div class="login-header-logo">Well Clinic</div>
+<h1>Controle de Gases</h1>
+<div class="login-header-divider"></div>
+</div>
+<div class="login-body">
+<div class="login-card">
+<h2>Bem-vindo</h2>
+<p>Faça login para continuar</p>
+<div class="login-error" id="loginError"></div>
+<div class="login-field">
+<label>Email</label>
+<input type="email" id="loginEmail" placeholder="seu@email.com" autocomplete="email">
+</div>
+<div class="login-field">
+<label>PIN (4 dígitos)</label>
+<input type="password" id="loginPin" placeholder="••••" maxlength="4" inputmode="numeric" autocomplete="off">
+<div class="login-pin-display" id="loginPinDisplay"></div>
+</div>
+<button class="login-btn" id="loginBtn" onclick="handleLogin()">
+<span class="login-spinner" id="loginSpinner"></span>
+<span id="loginBtnText">Entrar</span>
+</button>
+</div>
+</div>
+</div>
+
+<!-- PIN REGISTRATION OVERLAY -->
+<div class="registro-overlay" id="registroOverlay">
+<div class="registro-header">
+<h1>Bem-vindo à Well Clinic</h1>
+<p id="registroUserName">Olá!</p>
+</div>
+<div class="registro-body">
+<div class="registro-card">
+<div class="registro-field">
+<label>Crie seu PIN</label>
+<div class="registro-pin-inputs">
+<input type="password" class="registro-pin-input" id="registroPin1" maxlength="4" inputmode="numeric" placeholder="••••">
+</div>
+</div>
+<div class="registro-field">
+<label>Confirme seu PIN</label>
+<div class="registro-pin-inputs">
+<input type="password" class="registro-pin-input" id="registroPin2" maxlength="4" inputmode="numeric" placeholder="••••">
+</div>
+</div>
+<div class="registro-error" id="registroError"></div>
+<div class="registro-success" id="registroSuccess">PIN criado com sucesso! Você pode fazer login agora.</div>
+<button class="registro-btn" id="registroBtn" onclick="handleSetPin()">
+<span class="login-spinner" id="registroSpinner"></span>
+Ativar Minha Conta
+</button>
+<button class="registro-success-btn" id="registroSuccessBtn" onclick="goToLogin()">Ir para Login</button>
+</div>
+</div>
+</div>
+
+<!-- MAIN APP -->
 <div class="header"><div class="header-inner">
 <button class="back-btn" id="backBtn" onclick="goHome()">←</button>
+<button class="header-logout hide" id="logoutBtn" onclick="handleLogout()">Sair</button>
 <a class="portal-link" id="portalLink" href="https://jotash24-sys.github.io/wellclinic-portal/"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Portal</a>
 <div class="header-logo">Well Clinic</div>
 <h1>Controle de Gases Medicinais</h1>
 <div class="header-divider"></div>
 <div class="header-sub">Sistema de Registro e Rastreabilidade</div>
+<div class="header-user" id="headerUser"></div>
 </div></div>
 
 <div class="container">
@@ -176,7 +301,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   <div class="menu-btn menu-open animate-in delay-1" onclick="startValve('abertura')"><div class="menu-stripe"></div><div class="menu-content"><div class="menu-icon">🔓</div><div class="menu-text"><h3>Abertura de Válvulas</h3><p>Registre a abertura no início do expediente. Obrigatório para rastreabilidade.</p></div></div><div class="menu-arrow">›</div></div>
   <div class="menu-btn menu-close animate-in delay-2" onclick="startValve('fechamento')"><div class="menu-stripe"></div><div class="menu-content"><div class="menu-icon">🔒</div><div class="menu-text"><h3>Fechamento de Válvulas</h3><p>Registre o fechamento ao final do dia. Garante a segurança dos cilindros.</p></div></div><div class="menu-arrow">›</div></div>
   <div class="menu-btn menu-move animate-in delay-3" onclick="startMove()"><div class="menu-stripe"></div><div class="menu-content"><div class="menu-icon">🔄</div><div class="menu-text"><h3>Movimentação de Cilindros</h3><p>Escaneie o QR Code para registrar troca, reposição ou retirada.</p></div></div><div class="menu-arrow">›</div></div>
-  <div class="menu-btn menu-nf animate-in delay-4" onclick="showScreen('nf')"><div class="menu-stripe"></div><div class="menu-content"><div class="menu-icon">📄</div><div class="menu-text"><h3>Registrar Nota Fiscal</h3><p>Vincule notas fiscais de compra aos cilindros para controle de custos.</p></div></div><div class="menu-arrow">›</div></div>
+  <div class="menu-btn menu-nf animate-in delay-4" id="menuNf" onclick="showScreen('nf')"><div class="menu-stripe"></div><div class="menu-content"><div class="menu-icon">📄</div><div class="menu-text"><h3>Registrar Nota Fiscal</h3><p>Vincule notas fiscais de compra aos cilindros para controle de custos.</p></div></div><div class="menu-arrow">›</div></div>
 </div>
 <div class="footer"><div class="footer-divider"></div><div class="footer-brand">Well Clinic</div><div class="footer-sub">Gases Medicinais · Rastreabilidade · Auditoria</div><div class="footer-dev">Desenvolvido por Jonatã Schneider</div></div>
 </div>
@@ -184,7 +309,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 <!-- ═══ VALVE ═══ -->
 <div class="screen" id="screenValve">
 <div class="valve-header animate-in" id="valveHeader"><div class="valve-icon" id="valveIcon">🔓</div><h2 id="valveTitle">Abertura de Válvulas</h2><p id="valveSubtitle">Marque cada válvula após a abertura</p></div>
-<div class="card animate-in delay-1"><div class="card-title"><span class="step">1</span> Responsável</div><div class="field"><label>Quem está realizando?</label><input type="text" id="valveOperador" placeholder="Nome completo" autocomplete="name"></div></div>
+<div class="card animate-in delay-1"><div class="card-title"><span class="step">1</span> Responsável</div><div class="field"><label>Quem está realizando?</label><input type="text" id="valveOperador" placeholder="Nome completo" autocomplete="name" readonly></div></div>
 <div class="card animate-in delay-2"><div class="card-title"><span class="step">2</span> Válvulas</div><label style="margin-bottom:12px;font-size:12px;">Toque em cada válvula conforme operar:</label>
 <div class="valve-list" id="valveList">
   <div class="valve-item" data-valve="Sala 8 — Oxigênio" onclick="toggleValve(this)"><div class="valve-check">✓</div><div class="valve-info"><div class="valve-name">Oxigênio</div><div class="valve-loc">📍 Sala 8</div></div></div>
@@ -213,7 +338,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 <div class="screen" id="screenMove">
 <div class="cyl-banner animate-in" id="cylBanner"><span class="cyl-tag" id="cylTag">—</span><div class="cyl-id" id="cylId">—</div><div class="cyl-cap" id="cylCap">—</div></div>
 
-<div class="card animate-in delay-1"><div class="card-title"><span class="step">1</span> Operador</div><div class="field"><label>Quem está realizando?</label><input type="text" id="moveOperador" placeholder="Nome completo" autocomplete="name"></div></div>
+<div class="card animate-in delay-1"><div class="card-title"><span class="step">1</span> Operador</div><div class="field"><label>Quem está realizando?</label><input type="text" id="moveOperador" placeholder="Nome completo" autocomplete="name" readonly></div></div>
 
 <div class="card animate-in delay-2"><div class="card-title"><span class="step">2</span> Ação</div><label style="margin-bottom:12px;font-size:12px;">O que está sendo feito?</label>
 <div class="action-toggle">
@@ -324,13 +449,221 @@ let currentCylinder=null,selectedAction=null,selectedLocation=null,currentValveM
 let sigCanvas,sigCtx,sigDrawing=false,sigHasData=false;
 let photoBase64=null;
 let nfItemCount=1;
+let currentSession=null;
+
+// ── API CALLS ──
+async function apiCall(payload){
+  try{
+    const response=await fetch(APPS_SCRIPT_URL,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify(payload)
+    });
+    return await response.json();
+  }catch(e){
+    console.error('API Error:',e);
+    throw e;
+  }
+}
+
+// ── AUTH ──
+async function handleLogin(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const pin=document.getElementById('loginPin').value.trim();
+  const err=document.getElementById('loginError');
+  const btn=document.getElementById('loginBtn');
+  const spin=document.getElementById('loginSpinner');
+
+  if(!email||pin.length!==4){
+    err.textContent='Email e PIN válidos são necessários.';
+    err.classList.add('show');
+    return;
+  }
+
+  err.classList.remove('show');
+  btn.disabled=true;
+  spin.classList.add('show');
+
+  try{
+    const result=await apiCall({tipo_registro:'login',email,pin});
+    if(result.status==='ok'&&result.user){
+      currentSession={
+        token:result.session_token,
+        user:result.user,
+        email:result.user.email,
+        nome:result.user.nome||'Usuário',
+        perfil:result.user.perfil||'operador'
+      };
+      sessionStorage.setItem('wc_session',JSON.stringify(currentSession));
+      showApp();
+    }else{
+      err.textContent=result.msg||'Email ou PIN incorretos.';
+      err.classList.add('show');
+    }
+  }catch(e){
+    err.textContent='Erro de conexão.';
+    err.classList.add('show');
+  }finally{
+    btn.disabled=false;
+    spin.classList.remove('show');
+  }
+}
+
+async function validateSession(){
+  const sess=sessionStorage.getItem('wc_session');
+  if(!sess)return false;
+
+  try{
+    const parsed=JSON.parse(sess);
+    const result=await apiCall({tipo_registro:'validar_sessao',session_token:parsed.token});
+    if(result.status==='ok'&&result.user){
+      currentSession=parsed;
+      return true;
+    }
+  }catch(e){
+    console.error('Session validation failed:',e);
+  }
+
+  sessionStorage.removeItem('wc_session');
+  return false;
+}
+
+function handleLogout(){
+  sessionStorage.removeItem('wc_session');
+  currentSession=null;
+  document.getElementById('loginEmail').value='';
+  document.getElementById('loginPin').value='';
+  document.getElementById('loginError').classList.remove('show');
+  document.getElementById('loginOverlay').classList.add('show');
+  document.getElementById('logoutBtn').classList.add('hide');
+  document.getElementById('headerUser').textContent='';
+  goHome();
+}
+
+async function handleSetPin(){
+  const pin1=document.getElementById('registroPin1').value.trim();
+  const pin2=document.getElementById('registroPin2').value.trim();
+  const err=document.getElementById('registroError');
+  const success=document.getElementById('registroSuccess');
+  const btn=document.getElementById('registroBtn');
+  const spin=document.getElementById('registroSpinner');
+
+  if(pin1.length!==4||pin2.length!==4){
+    err.textContent='PINs devem ter exatamente 4 dígitos.';
+    err.classList.add('show');
+    success.classList.remove('show');
+    return;
+  }
+
+  if(pin1!==pin2){
+    err.textContent='Os PINs não combinam.';
+    err.classList.add('show');
+    success.classList.remove('show');
+    return;
+  }
+
+  const params=new URLSearchParams(window.location.search);
+  const token=params.get('registro');
+  if(!token){
+    err.textContent='Token de registro inválido.';
+    err.classList.add('show');
+    return;
+  }
+
+  err.classList.remove('show');
+  btn.disabled=true;
+  spin.classList.add('show');
+
+  try{
+    const result=await apiCall({tipo_registro:'set_pin',invite_token:token,pin:pin1});
+    if(result.status==='ok'){
+      success.classList.add('show');
+      document.getElementById('registroSuccessBtn').classList.add('show');
+      btn.style.display='none';
+      document.getElementById('registroPin1').disabled=true;
+      document.getElementById('registroPin2').disabled=true;
+    }else{
+      err.textContent=result.msg||'Erro ao criar PIN.';
+      err.classList.add('show');
+    }
+  }catch(e){
+    err.textContent='Erro de conexão.';
+    err.classList.add('show');
+  }finally{
+    btn.disabled=false;
+    spin.classList.remove('show');
+  }
+}
+
+function goToLogin(){
+  document.getElementById('registroOverlay').classList.remove('show');
+  document.getElementById('loginOverlay').classList.add('show');
+}
+
+function showApp(){
+  document.getElementById('loginOverlay').classList.remove('show');
+  document.getElementById('logoutBtn').classList.remove('hide');
+  document.getElementById('headerUser').textContent=`Olá, ${currentSession.nome}`;
+  updateUIForRole();
+  showScreen('home');
+}
+
+function updateUIForRole(){
+  const isGestor=currentSession.perfil==='gestor';
+  const nfBtn=document.getElementById('menuNf');
+  if(!isGestor){
+    nfBtn.style.display='none';
+  }else{
+    nfBtn.style.display='';
+  }
+}
+
+// ── PIN DISPLAY ──
+document.getElementById('loginPin').addEventListener('input',function(){
+  const val=this.value;
+  const display=document.getElementById('loginPinDisplay');
+  display.innerHTML='';
+  for(let i=0;i<4;i++){
+    const dot=document.createElement('div');
+    dot.className='pin-dot'+(i<val.length?' filled':'');
+    dot.textContent='●';
+    display.appendChild(dot);
+  }
+});
 
 // ── INIT ──
-function init(){
-  const cid=new URLSearchParams(window.location.search).get('cid');
-  if(cid&&CILINDROS[cid]){currentCylinder=CILINDROS[cid];showScreen('move');setupMoveForm();}
-  const s=localStorage.getItem('wc_operador');
-  if(s){document.getElementById('moveOperador').value=s;document.getElementById('valveOperador').value=s;}
+async function init(){
+  const params=new URLSearchParams(window.location.search);
+  if(params.get('registro')){
+    const token=params.get('registro');
+    document.getElementById('registroOverlay').classList.add('show');
+    document.getElementById('loginOverlay').classList.remove('show');
+
+    try{
+      const result=await apiCall({tipo_registro:'get_invite_info',token});
+      if(result.user&&result.user.nome){
+        document.getElementById('registroUserName').textContent=`Bem-vindo, ${result.user.nome}!`;
+      }
+    }catch(e){
+      console.error('Failed to fetch invite info:',e);
+    }
+    return;
+  }
+
+  const isValid=await validateSession();
+  if(isValid){
+    showApp();
+  }else{
+    document.getElementById('loginOverlay').classList.add('show');
+  }
+
+  const cid=params.get('cid');
+  if(cid&&CILINDROS[cid]&&currentSession){
+    currentCylinder=CILINDROS[cid];
+    showScreen('move');
+    setupMoveForm();
+  }
+
   initSignature();
 }
 
@@ -369,12 +702,11 @@ function startValve(mode){
   const h=document.getElementById('valveHeader'),btn=document.getElementById('valveSubmitBtn');
   if(mode==='abertura'){h.className='valve-header opening animate-in';document.getElementById('valveIcon').textContent='🔓';document.getElementById('valveTitle').textContent='Abertura de Válvulas';document.getElementById('valveSubtitle').textContent='Marque cada válvula após abertura';document.getElementById('valveSubmitText').textContent='Registrar Abertura';btn.className='submit-btn opening-btn';}
   else{h.className='valve-header closing animate-in';document.getElementById('valveIcon').textContent='🔒';document.getElementById('valveTitle').textContent='Fechamento de Válvulas';document.getElementById('valveSubtitle').textContent='Marque cada válvula após fechamento';document.getElementById('valveSubmitText').textContent='Registrar Fechamento';btn.className='submit-btn closing-btn';}
-  const s=localStorage.getItem('wc_operador');if(s)document.getElementById('valveOperador').value=s;
+  document.getElementById('valveOperador').value=currentSession.nome;
   showScreen('valve');
 }
 function toggleValve(el){el.classList.toggle('checked');checkValveReady();}
 function checkValveReady(){document.getElementById('valveSubmitBtn').disabled=!(document.getElementById('valveOperador').value.trim()&&document.querySelectorAll('#valveList .valve-item.checked').length>0);}
-document.getElementById('valveOperador').addEventListener('input',checkValveReady);
 
 function confirmValve(){
   const op=document.getElementById('valveOperador').value.trim(),checked=Array.from(document.querySelectorAll('#valveList .valve-item.checked')).map(e=>e.dataset.valve),obs=document.getElementById('valveObs').value.trim();
@@ -395,6 +727,7 @@ function setupMoveForm(){
   document.getElementById('cylTag').textContent=currentCylinder.tipo;
   document.getElementById('cylId').textContent=currentCylinder.id;
   document.getElementById('cylCap').textContent='Capacidade: '+currentCylinder.capacidade;
+  document.getElementById('moveOperador').value=currentSession.nome;
 }
 function selectAction(btn){document.querySelectorAll('.action-btn').forEach(b=>b.classList.remove('selected-out','selected-in'));selectedAction=btn.dataset.action;btn.classList.add(selectedAction.includes('Retirada')?'selected-out':'selected-in');checkMoveReady();}
 function selectLocation(btn){document.querySelectorAll('.loc-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');if(btn.dataset.loc==='Outra'){document.getElementById('outraField').style.display='block';selectedLocation=null;}else{document.getElementById('outraField').style.display='none';document.getElementById('outraLoc').value='';selectedLocation=btn.dataset.loc;}checkMoveReady();}
@@ -407,7 +740,7 @@ function checkMoveReady(){
   const cd=document.querySelectorAll('#safetyChecklist .valve-item.checked').length;
   document.getElementById('moveSubmitBtn').disabled=!(n&&a&&l&&cd===ct&&sigHasData);
 }
-document.getElementById('moveOperador').addEventListener('input',checkMoveReady);
+
 document.getElementById('outraLoc').addEventListener('input',checkMoveReady);
 
 function confirmMove(){
@@ -478,7 +811,6 @@ async function submitCurrent(){
   btn.disabled=true;spin.classList.add('show');err.classList.remove('show');
   try{
     await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(pendingPayload)});
-    localStorage.setItem('wc_operador',pendingPayload.operador||pendingPayload.fornecedor||'');
     let txt='';
     if(isV){const e=pendingPayload.acao==='Abertura'?'🔓':'🔒';txt=`${e} ${pendingPayload.acao} registrada\n\n${pendingPayload.valvulas.split(', ').length} válvulas`;}
     else if(isN){txt=`📄 NF ${pendingPayload.numero_nf} registrada\n\n${pendingPayload.fornecedor}\n${pendingPayload.itens.length} ite${pendingPayload.itens.length>1?'ns':'m'}`;}
