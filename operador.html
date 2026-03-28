@@ -580,8 +580,14 @@ async function handleLogin(){
         perfil:result.user.perfil||'operador'
       };
       localStorage.setItem('wc_session',JSON.stringify(currentSession));
-      // Login OK: mostrar o app direto (link pro portal fica no header)
-      showApp();
+      // Login OK: redirecionar ao portal (hub central)
+      // Se veio por QR Code (tem cid), fica no app de gases
+      const params=new URLSearchParams(window.location.search);
+      if(params.get('cid')){
+        showApp();
+      }else{
+        window.location.href='https://jotash24-sys.github.io/wellclinic-portal/';
+      }
     }else{
       err.textContent=result.msg||'Email ou PIN incorretos.';
       err.classList.add('show');
