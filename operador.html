@@ -24,6 +24,10 @@ body{font-family:'Poppins',sans-serif;background:var(--marfim);color:var(--grafi
 /* LOGIN OVERLAY */
 .login-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,var(--azul),var(--azul-soft));display:flex;flex-direction:column;z-index:1000;opacity:0;pointer-events:none;transition:opacity .3s}
 .login-overlay.show{opacity:1;pointer-events:auto}
+.loading-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,var(--azul),var(--azul-soft));display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1001;transition:opacity .3s}
+.loading-overlay.hide{opacity:0;pointer-events:none}
+.loading-overlay .ld-spinner{width:36px;height:36px;border:3px solid rgba(250,247,242,.15);border-top-color:var(--verde);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:16px}
+.loading-overlay .ld-text{color:var(--marfim);font-size:13px;opacity:.7;letter-spacing:.5px}
 .login-header{background:linear-gradient(135deg,var(--azul),var(--azul-soft));color:#fff;text-align:center;padding:40px 20px 30px;position:relative;overflow:hidden}
 .login-header::before{content:'';position:absolute;top:-50%;right:-20%;width:200px;height:200px;background:radial-gradient(circle,rgba(160,137,108,.1),transparent 70%);border-radius:50%}
 .login-header-logo{font-family:'Lora',serif;font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--dourado-light);margin-bottom:4px}
@@ -263,7 +267,10 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 <body>
 
 <!-- LOGIN OVERLAY -->
-<div class="login-overlay show" id="loginOverlay">
+<!-- LOADING OVERLAY (aparece primeiro enquanto valida sessão) -->
+<div class="loading-overlay" id="loadingOverlay"><div class="ld-spinner"></div><div class="ld-text">Carregando...</div></div>
+
+<div class="login-overlay" id="loginOverlay">
 <div class="login-header">
 <div class="login-header-logo">Well Clinic</div>
 <h1>Controle de Gases</h1>
@@ -341,25 +348,7 @@ Ativar Minha Conta
 <div class="home-greeting"><h2>O que deseja registrar?</h2><p>Selecione a operação abaixo</p></div>
 
 <!-- CHECKLIST DIÁRIO -->
-<div class="daily-checklist" id="dailyChecklist" style="display:none;">
-<div class="checklist-header"><span class="checklist-icon">📊</span><span class="checklist-title">Checklist do Dia</span><span class="checklist-date" id="checklistDate"></span></div>
-<div class="checklist-row" id="checklistAbertura">
-  <div class="checklist-label">🔓 Abertura</div>
-  <div class="checklist-progress"><div class="checklist-bar"><div class="checklist-fill opening" id="aberturaBar" style="width:0%"></div></div><span class="checklist-count" id="aberturaCount">0/5</span></div>
-  <div class="checklist-detail" id="aberturaDetail"></div>
-</div>
-<div class="checklist-row" id="checklistFechamento">
-  <div class="checklist-label">🔒 Fechamento</div>
-  <div class="checklist-progress"><div class="checklist-bar"><div class="checklist-fill closing" id="fechamentoBar" style="width:0%"></div></div><span class="checklist-count" id="fechamentoCount">0/5</span></div>
-  <div class="checklist-detail" id="fechamentoDetail"></div>
-</div>
-</div>
-
-<!-- RANKING TOP 3 -->
-<div class="ranking-card" id="rankingCard" style="display:none;">
-<div class="ranking-header"><span class="ranking-icon">🏆</span><span class="ranking-title">Top Contribuidores (30 dias)</span></div>
-<div class="ranking-list" id="rankingList"></div>
-</div>
+<!-- Checklist e Ranking removidos — aparecem no checklist.html do portal -->
 
 <div class="home-menu">
   <div class="menu-btn menu-open animate-in delay-1" onclick="startValve('abertura')"><div class="menu-stripe"></div><div class="menu-content"><div class="menu-icon">🔓</div><div class="menu-text"><h3>Abertura de Válvulas</h3><p>Registre a abertura no início do expediente. Obrigatório para rastreabilidade.</p></div></div><div class="menu-arrow">›</div></div>
@@ -710,8 +699,6 @@ function showApp(){
   document.getElementById('headerUser').textContent=`Olá, ${currentSession.nome}`;
   updateUIForRole();
   showScreen('home');
-  loadDailyChecklist();
-  loadRanking();
 }
 
 function updateUIForRole(){
@@ -739,11 +726,13 @@ document.getElementById('loginPin').addEventListener('input',function(){
 
 // ── INIT ──
 async function init(){
+  const loading=document.getElementById('loadingOverlay');
   const params=new URLSearchParams(window.location.search);
+
   if(params.get('registro')){
+    loading.classList.add('hide');
     const token=params.get('registro');
     document.getElementById('registroOverlay').classList.add('show');
-    document.getElementById('loginOverlay').classList.remove('show');
 
     try{
       const result=await apiCall({tipo_registro:'get_invite_info',token});
@@ -756,8 +745,11 @@ async function init(){
     return;
   }
 
+  // Mostrar loading enquanto valida sessão (sem flash do login)
   const cid=params.get('cid');
   const isValid=await validateSession();
+  loading.classList.add('hide');
+
   if(isValid){
     if(cid&&CILINDROS[cid]){
       currentCylinder=CILINDROS[cid];
@@ -766,7 +758,7 @@ async function init(){
       showScreen('move');
       setupMoveForm();
     }else{
-      showApp(); // sessão válida, mostrar o sistema de gases
+      showApp();
     }
     return;
   }else{
