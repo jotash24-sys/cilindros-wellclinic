@@ -307,6 +307,10 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 <div class="registro-body">
 <div class="registro-card">
 <div class="registro-field">
+<label>Como quer ser chamado?</label>
+<input type="text" id="registroApelido" placeholder="Ex: Jonatã, Dra. Jaque, Gabi..." style="width:100%;padding:12px 14px;border-radius:10px;border:1px solid rgba(160,137,108,.3);font-family:'Poppins',sans-serif;font-size:14px;background:var(--marfim);color:var(--grafite);text-align:center;">
+</div>
+<div class="registro-field">
 <label>Crie seu PIN</label>
 <div class="registro-pin-inputs">
 <input type="password" class="registro-pin-input" id="registroPin1" maxlength="4" inputmode="numeric" placeholder="••••">
@@ -634,12 +638,20 @@ function handleLogout(){
 }
 
 async function handleSetPin(){
+  const apelido=document.getElementById('registroApelido').value.trim();
   const pin1=document.getElementById('registroPin1').value.trim();
   const pin2=document.getElementById('registroPin2').value.trim();
   const err=document.getElementById('registroError');
   const success=document.getElementById('registroSuccess');
   const btn=document.getElementById('registroBtn');
   const spin=document.getElementById('registroSpinner');
+
+  if(!apelido){
+    err.textContent='Escolha como quer ser chamado.';
+    err.classList.add('show');
+    success.classList.remove('show');
+    return;
+  }
 
   if(pin1.length!==4||pin2.length!==4){
     err.textContent='PINs devem ter exatamente 4 dígitos.';
@@ -668,7 +680,7 @@ async function handleSetPin(){
   spin.classList.add('show');
 
   try{
-    const result=await apiCall({tipo_registro:'set_pin',invite_token:token,pin:pin1});
+    const result=await apiCall({tipo_registro:'set_pin',invite_token:token,pin:pin1,apelido:apelido});
     if(result.status==='ok'){
       success.classList.add('show');
       document.getElementById('registroSuccessBtn').classList.add('show');
